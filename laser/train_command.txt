@@ -1,0 +1,16 @@
+python train.py --gpu 0 --log_dir '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/laser/logs_fov_80_zind_random_yaw' --fov 80 --its 300000 --dataset zind --dataset_path '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/zind/zind_raw'
+/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/zind/zind_raw'
+
+python train.py --gpu 0 --log_dir '/home/yuvalg/projects/Semantic_Floor_plan_localization/laser/logs_fov_80_s3d_256_img_size' --fov 80 --its 300000 --dataset s3d --dataset_path '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/structured3d/structured3d_panorama'
+
+
+python eval.py --save --log_dir '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/laser/logs/logs-original_paper/' --dataset zind --dataset_path '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/zind/zind_raw' --fov 80
+
+python scripts/generate_html.py --result_dir /datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/laser/logs/logs-original_paper/results-refine-fov080-rnd-zindd
+python scripts/generate_html.py --result_dir /home/yuvalg/projects/Semantic_Floor_plan_localization/laser/logs_fov_80_s3d/results-refine-fov080-rnd-s3df
+
+
+
+
+python eval.py --save --log_dir '/home/yuvalg/projects/Semantic_Floor_plan_localization/laser/logs_fov_80_s3d_256_img_size' --dataset s3df --dataset_path '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/structured3d/structured3d_panorama' --fov 80
+python scripts/generate_html.py --result_dir /home/yuvalg/projects/Semantic_Floor_plan_localization/laser/logs_fov_80_s3d_256_img_size/results-refine-fov080-rnd-s3df

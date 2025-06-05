@@ -1,0 +1,50 @@
+# evaluation/configuration/config_eval_diffusion.yaml
+
+# Paths
+dataset_dir: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full/structured3d_perspective_full'
+prob_vol_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full/prob_vols'
+split_file: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full/structured3d_perspective_full/split.yaml'
+
+# Results directory
+results_dir: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/results/full/diffusion/ddim/narrow_gt_map-true'
+
+max_h: 1760
+max_w: 1760
+pad_to_max: True
+
+# Diffusion parameters
+num_timesteps: 1000  # Number of diffusion steps
+beta_start: 0.0001   # Start value for beta schedule
+beta_end: 0.02       # End value for beta schedule
+
+model_type: "crowed_diff" # crowed_diff / regular
+# Diffusion model checkpoint
+diffusion_model_checkpoint: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/logs/diffusion_model/diffusion_net_dataset_size-small_epochs-100_acc_only-True_narrow_gt_map-True_model_type-crowed_diff/final_diffusion_model_checkpoint.ckpt'
+model_channels: 64   # Base number of channels for thes model
+num_res_blocks: 2    # Number of residual blocks per level
+attention_resolutions: [32,16,8]  # Resolutions at which to use attention
+dropout: 0.1         # Dropout rate
+channel_mult: [1, 2, 4, 8]  # Channel multipliers for each level
+conv_resample: True  # Use convolutions for up/downsampling
+conv_resample: True
+use_checkpoint: False
+use_fp16: False
+dims: 2  
+
+acc_only: true 
+narrow_gt_map: true
+positional_loss_weight: 1.0
+# Dataset parameters
+L: 0
+
+# Localization parameters
+F_W: 0.59587643422
+V: 7
+
+# Evaluation parameters
+use_ground_truth_depth: false  # Set to true to use ground truth depth
+use_ground_truth_semantic: false  # Set to true to use ground truth semantics
+num_sampling_steps: 100 # Number of sampling steps for the diffusion model
+number_of_evaluations: 1
+
+ 

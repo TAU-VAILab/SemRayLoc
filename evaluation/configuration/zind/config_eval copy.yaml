@@ -1,0 +1,61 @@
+# Paths
+dataset_dir: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/zind/zind_data_set_80_fov'
+desdf_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/zind/desdf_80_fov'
+# log_dir_depth: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/logs/zind/fov_80_correct_scale_final/depth/final_depth_model_checkpoint.ckpt' #Fixed Yaw
+log_dir_depth: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/logs/zind/fov_80_laser_train/depth/depth_net-epoch=61-loss-valid=0.87.ckpt' # Random yaw
+log_dir_semantic: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/logs/zind/fov_80_correct_scale/semantic/final_semantic_model_checkpoint.ckpt'
+split_file: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/zind/zind_data_set_80_fov/split.yaml'
+prob_vol_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/zind/prob_vol'
+
+
+results_dir: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/results/zind/0_yaw'
+# Dataset parameters
+L: 0
+
+# Depth network parameters
+D: 128
+d_min: 0.1
+d_max: 15.0
+d_hyp: -0.2
+
+#Localize:
+F_W: 0.5
+V: 9
+
+# Semantic network parameters
+num_classes: 4
+
+use_saved_prob_vol: false
+num_of_scenes: -1
+
+# Evaluation parameters
+prediction_type: 'combined'  # Options: 'depth', 'semantic', 'combined', 'all'
+use_ground_truth_depth: false  # Set to true to use ground truth depth
+use_ground_truth_semantic: false  # Set to true to use ground truth semantics
+
+# Weight combinations for combined evaluation
+weight_combinations:
+  # - [1.0, 0]  # Only depth
+  # - [0.9, 0.1]
+  # - [0.8, 0.2]
+  # - [0.7, 0.3]
+  - [0.6, 0.4]
+  # - [0.5, 0.5]
+  # - [0.4, 0.6]
+  # - [0.3, 0.7]
+  # # - [0.2, 088]
+  # - [0.1, 0.9]
+  # - [0, 1.0]  # Only Semantic
+
+use_room_aware: true
+log_dir_semantic_and_room_aware: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/logs/zind/fov_80_laser_train_semantics/semantic/semantic_net-epoch=50-loss-valid=2.31.ckpt' #random yaw
+# log_dir_semantic_and_room_aware: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/modules/Final_wights/zind/semantic_net-epoch=28-loss-valid=2.39_15_rooms.ckpt' #Fix yaw
+semantic_net_type: "resnet_cls"
+room_selection_threshold: 0.8
+num_room_types: 15
+room_data_dir: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/zind/zind_data_set_80_fov_with_room_types'
+top_k: 5
+
+
+#For random yaw:
+dataset_pano: "/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/zind/zind_raw"

@@ -1,0 +1,29 @@
+# Paths
+dataset_dir: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full/structured3d_perspective_full'
+prob_vol_save_dir: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full'
+prob_vol_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full/prob_vols'
+
+# Dataset parameters
+L: 0
+
+# Depth network parameters
+D: 128
+d_min: 0.1
+d_max: 15.0
+d_hyp: -0.2
+
+# Semantic network parameters
+num_classes: 4
+
+# Evaluation parameters
+start_scene: 1000
+end_scene: 2000
+
+# Weight combinations for combine map vectors
+weight_combinations:
+  - [1.0, 0.0]  # Only depth
+  - [0.9, 0.1]  # Only depth
+  - [0.5, 0.5]
+
+save_vectors: True
+

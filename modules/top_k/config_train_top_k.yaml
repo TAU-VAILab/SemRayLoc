@@ -1,0 +1,13 @@
+dataset: "structured3d_perspective_full"
+dataset_path: "/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full"
+top_k_results_dir: "/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/modules/top_k/results"
+split_file: "/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full/structured3d_perspective_full/split.yaml"
+ckpt_path: "modules/top_k/logs/simple"
+use_fp: False
+is_simple: True
+poses_filename: "poses.txt"
+epochs: 100
+batch_size: 16
+lr: 0.001
+num_workers: 8
+class_weights: [1.0000, 5.7143, 13.3333]

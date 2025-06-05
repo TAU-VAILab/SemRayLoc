@@ -1,0 +1,29 @@
+# config_evaluate_top_k.yaml
+
+dataset: "structured3d_perspective_full"
+dataset_path: "/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full"
+top_k_results_dir: "/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/modules/top_k/results_dist_0.05_top_10_with_augmentations_5_deg"
+split_file: "/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full/structured3d_perspective_full/split.yaml"
+ckpt_path: "/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/modules/top_k/evaluate_results"  
+
+use_fp: True
+poses_filename: "poses.txt"
+epochs: 100  # You can keep this as is or adjust if needed
+batch_size: 16
+lr: 0.001
+num_workers: 8
+num_candidates: 20
+
+
+alpha: 0.2
+
+# Depth network parameters
+D: 128
+d_min: 0.1
+d_max: 15.0
+d_hyp: -0.2
+# Semantic network parameters
+num_classes: 4
+
+log_dir_depth: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/modules/Final_wights/depth/final_depth_model_checkpoint.ckpt'
+log_dir_semantic: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/modules/Final_wights/semantic/mask2former_tiny_50k_semantic_net-epoch=19-loss-valid=0.34.ckpt'

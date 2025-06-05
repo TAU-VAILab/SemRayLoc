@@ -1,0 +1,30 @@
+data/
+floorplans/
+output/
+logs/
+lightning_logs/
+results/
+utils/temp_figs/
+modules/Final_wights
+modules/final_weights
+laser/logs/
+laser/logs_fov_80_s3d/
+laser/logs_fov_80_s3d_256_img_size/
+laser/logs_fov_80_zind/
+modules/top_k/results/
+modules/top_k/results_dist_1_top_10/
+modules/top_k/results_dist_1_top_10_vizualizations/
+modules/top_k/results_dist_1_top_5_vizualize/
+modules/top_k/results_dist_1_top_10_vizualizations_v2/
+modules/top_k/results_dist_0.2_top_20/
+modules/top_k/results_dist_0.2_top_20_with_augmentations/
+modules/top_k/results_dist_0.1_top_20_with_augmentations/
+modules/top_k/results_dist_0.05_top_10_with_augmentations_5_deg/
+# Ignore all __pycache__ directories recursively
+__pycache__/
+temp/
+# Optionally, also ignore Python bytecode files (compiled Python files)
+*.pyc
+modules/Final_wights/
+.git_backup/
+

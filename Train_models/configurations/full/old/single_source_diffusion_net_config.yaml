@@ -1,0 +1,51 @@
+# Paths
+dataset_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full'
+dataset: 'structured3d_perspective_full'  # Dataset name
+prob_vol_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full/prob_vols'
+
+# Checkpoint path for saving the diffusion model
+ckpt_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/logs/single_source_diffusion_model/'  # Base checkpoint path
+
+# Training parameters
+batch_size: 8  # Adjust based on your GPU memory
+epochs: 100
+lr: 0.0001
+
+pad_all_to_max: True
+max_h: 1760
+max_w: 1760
+
+acc_only: true
+narrow_gt_map: false
+
+# Training dataset size
+NET_TYPE: 'semantic' #depth/semantic
+DATA_SET_SIZE: 'full' # Options: 'tiny', 'small', 'medium', 'full'
+
+# Diffusion parameters
+num_timesteps: 1000  # Number of diffusion steps
+beta_start: 0.001   # Start value for beta schedule
+beta_end: 0.02       # End value for beta schedule
+
+# Model architecture parameters
+model_channels: 64   # Base number of channels for thes model
+num_res_blocks: 2  # Number of residual blocks per level
+attention_resolutions: [32, 16,8]  # Resolutions at which to use attention
+dropout: 0.1         # Dropout rate
+channel_mult: [1, 2, 4, 8]  # Channel multipliers for each level
+conv_resample: True  # Use convolutions for up/downsampling
+conv_resample: True
+use_checkpoint: False
+use_fp16: False
+dims: 2              # Since we're dealing with 3D volumes
+
+# Other parameters
+L: 0  # Sequence length, adjust as needed
+num_classes: 4  # Number of semantic classes
+
+# Device settings
+num_workers: 4   # Number of data loader workers
+
+# Logging parameters
+log_every_n_steps: 500  # Frequency of logging
+num_sampling_steps: 20  # Number of sampling steps for the diffusion model

@@ -1,0 +1,61 @@
+# Paths
+dataset_dir: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/zind_perspective'
+desdf_path: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/zind_desdf'
+
+log_dir_depth: '/home/yuvalg/projects/Semantic_Floor_plan_localization/modules/final_weights/zind/depth/depth_net-epoch=99-loss-valid=0.73.ckpt' 
+log_dir_semantic: '/home/yuvalg/projects/Semantic_Floor_plan_localization/modules/final_weights/zind/semantic/semantic_net-epoch=23-loss-valid=2.32.ckpt' 
+
+split_file: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/zind_perspective/split.yaml'
+prob_vol_path: ''
+
+
+results_dir: '/home/yuvalg/projects/Semantic_Floor_plan_localization/results/zind/depth_and_refinment_exp'
+# Dataset parameters
+L: 0
+
+# Depth network parameters
+D: 128
+d_min: 0.1
+d_max: 15.0
+d_hyp: -0.2
+
+#Localize:
+F_W: 0.5
+V: 9
+
+# Semantic network parameters
+num_classes: 4
+
+use_saved_prob_vol: false
+num_of_scenes: -1
+
+# Evaluation parameters
+prediction_type: 'combined'  # Options: 'depth', 'semantic', 'combined', 'all'
+use_ground_truth_depth: false  # Set to true to use ground truth depth
+use_ground_truth_semantic: false  # Set to true to use ground truth semantics
+
+# Weight combinations for combined evaluation
+weight_combinations:
+  - [1.0, 0]  # Only depth
+  # - [0.9, 0.1]
+  # - [0.8, 0.2]
+  # - [0.7, 0.3]
+  - [0.6, 0.4]
+  # - [0.5, 0.5]
+  # - [0.4, 0.6]
+  # - [0.3, 0.7]
+  # - [0.1, 0.9]
+  # - [0, 1.0]  # Only Semantic
+
+use_room_aware: true
+log_dir_semantic_and_room_aware: '/home/yuvalg/projects/Semantic_Floor_plan_localization/modules/final_weights/zind/semantic/semantic_net-epoch=23-loss-valid=2.32.ckpt'
+semantic_net_type: "resnet_cls"
+room_selection_threshold: 0.7
+num_room_types: 14
+room_data_dir: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/zind_perspective'
+top_k: 5
+
+
+#For random yaw:
+pano_dir: "/home/yuvalg/projects/Semantic_Floor_plan_localization/data/zind_data"
+dataset_pano:  "/home/yuvalg/projects/Semantic_Floor_plan_localization/data/zind_data"

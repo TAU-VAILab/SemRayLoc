@@ -1,0 +1,76 @@
+# evaluation/configuration/config.yaml
+
+# Paths
+dataset_dir: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/structured3d_panorama/test_data_set_full'
+desdf_path: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/structured3d/desdf'
+log_dir_depth: '/home/yuvalg/projects/Semantic_Floor_plan_localization/logs/pano/random_yaw_train/depth_4_27_25/depth/depth_net-epoch=95-loss-valid=0.37.ckpt'
+log_dir_semantic: '/home/yuvalg/projects/Semantic_Floor_plan_localization/logs/pano/random_yaw_train/semantic/semantic/semantic_net-epoch=45-loss-valid=1.39.ckpt'
+
+
+split_file: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/structured3d_panorama/test_data_set_full/split.yaml'
+prob_vol_path: ''
+#------------------------------------------
+results_dir: '/home/yuvalg/projects/Semantic_Floor_plan_localization/results/tests_27_4_v4'
+
+#------------------------------------------
+combined_prob_vols_net_path: ''
+combined_net_size: ""
+
+#------------------------------------------
+# Dataset parameters
+L: 0
+
+# Depth network parameters
+D: 128
+d_min: 0.1
+d_max: 15.0
+d_hyp: -0.2
+
+#Localize:
+F_W: 0.59587643422
+V: 9
+# depth_checkpoint: 'depth/depth_net-epoch=94-loss-valid=0.47.ckpt'
+# depth_checkpoint: 'depth/final_depth_model_checkpoint.ckpt'
+
+# Semantic network parameters
+num_classes: 4
+
+# Evaluation parameters
+prediction_type: 'combined'  # Options: 'depth', 'semantic', 'combined', 'all'
+use_ground_truth_depth: false  # Set to true to use ground truth depth
+use_ground_truth_semantic: false  # Set to true to use ground truth semantics
+use_saved_prob_vol: false
+num_of_scenes: -1
+max_h: 1760
+max_w: 1760
+
+# Weight combinations for combined evaluation
+weight_combinations:
+  # - [1.0, 0]  # Only depth
+  # - [0.9, 0.1]
+  # - [0.8, 0.2]
+  # - [0.7, 0.3]
+  - [0.6, 0.4]
+  # - [0.5, 0.5]
+  # - [0.4, 0.6]
+  # - [0.3, 0.7]
+  # - [0.2, 0.8]
+  # - [0.1, 0.9]
+  # - [0, 1.0]  # Only Semantic
+
+top_k: 5
+
+log_dir_semantic_maskformer: ''
+use_maskformer: true
+
+log_dir_semantic_maskformer_small: ''
+use_small_maskformer: true
+
+use_room_aware: true
+room_aware_checkpoint: ''
+room_selection_threshold: 0.6
+num_room_types: 16
+
+log_dir_semantic_and_room_aware: '/home/yuvalg/projects/Semantic_Floor_plan_localization/logs/pano/random_yaw_train/semantic/semantic/semantic_net-epoch=45-loss-valid=1.39.ckpt'
+semantic_net_type: "resnet_cls"
+room_data_dir: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/structured3d_panorama/test_data_set_full'

@@ -1,0 +1,5 @@
+results:
+1. re train the networks on Zind as results are not so good.
+2. S3D - results for 60/90/120 FOV
+3. Hotels maps semantics?
+4. remove the cos adustment from the dists in the create

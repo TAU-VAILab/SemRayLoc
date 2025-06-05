@@ -1,0 +1,53 @@
+# Train_models/configurations/full/prob_vol_path_config.yaml
+
+# Paths
+dataset_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full'
+dataset: 'structured3d_perspective_full'  # Dataset name
+prob_vol_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full/prob_vols'
+ckpt_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/logs/combined/prb_vol_nets'  # Base checkpoint path
+# DATA_SET_SIZE: 'tiny'
+# DATA_SET_SIZE: 'small'
+# DATA_SET_SIZE: 'medium'
+DATA_SET_SIZE: 'full'
+
+acc_only: true # prob vol is [h,w,o] or [h,w]
+
+batch_size: 4
+epochs: 100
+lr: 0.001
+
+# net_size: 'small' 
+# NET_SIZE: 'medium' 
+# NET_SIZE: 'medium' 
+# NET_SIZE: 'large' 
+# NET_SIZE: 'medium-small' 
+
+
+# Network type to use ('small', 'medium', 'large', 'medium-small', 'attention')
+# network_type: 'attention'
+
+# network_type: 'pose_regression_attention'
+
+network_type: 'medium'
+# network_type: 'large'
+# network_type: 'small'
+# network_type: 'medium-small'
+
+#mse, weighted-mse, cross-entropy, focal, nll
+# loss_type: 'mse'
+# loss_type: 'weighted-mse'
+# loss_type: 'cross-entropy'
+# loss_type: 'focal'
+# loss_type: 'nll'
+# loss_type: 'masked-mse'
+loss_type: 'l1'
+
+# Depth network parameters
+d_min: 0.1
+d_max: 15.0
+d_hyp: -0.2
+D: 128
+
+# Other parameters
+L: 0  # Sequence length, adjust as needed
+num_classes: 4  # Number of semantic classes

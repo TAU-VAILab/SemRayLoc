@@ -1,0 +1,60 @@
+# Paths
+dataset_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full'
+dataset: 'structured3d_perspective_full'  # Dataset name
+prob_vol_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full/prob_vols'
+
+# Checkpoint path for saving the diffusion model
+ckpt_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/logs/diffusion_model/combined_maps'  # Base checkpoint path
+
+# Training parameters
+batch_size: 8  # Adjust based on your GPU memory
+epochs: 100
+lr: 0.0001
+
+pad_all_to_max: True
+max_h: 1760
+max_w: 1760
+
+acc_only: true
+narrow_gt_map: false
+positional_loss_weight: 0
+
+# Training dataset size
+# Options: 'tiny', 'small', 'medium', 'full'
+DATA_SET_SIZE: 'small'
+
+# Network parameters
+NET_SIZE: 'medium'  # Adjusted to a suitable size for diffusion model
+
+# Diffusion parameters
+num_timesteps: 1000  # Number of diffusion steps
+beta_start: 0.0001   # Start value for beta schedule
+beta_end: 0.02       # End value for beta schedule
+
+# Model architecture parameters
+NET_TYPE: 'crowed_diff' #crowed_diff/regular
+model_channels: 32   # Base number of channels for thes model
+num_res_blocks: 1  # Number of residual blocks per level
+attention_resolutions: [16, 8]  # Resolutions at which to use attention
+dropout: 0.1         # Dropout rate
+channel_mult: [1, 2, 4, 8]  # Channel multipliers for each level
+conv_resample: True  # Use convolutions for up/downsampling
+conv_resample: True
+use_checkpoint: False
+use_fp16: False
+dims: 2              # Since we're dealing with 3D volumes
+
+# Other parameters
+L: 0  # Sequence length, adjust as needed
+num_classes: 4  # Number of semantic classes
+
+# Loss Type
+loss_type: 'mse'  # Typically MSE is used for diffusion models
+
+# Device settings
+use_fp16: False  # Set to True if you want to use mixed precision training
+num_workers: 4   # Number of data loader workers
+
+# Logging parameters
+log_every_n_steps: 500  # Frequency of logging
+num_sampling_steps: 20  # Number of sampling steps for the diffusion model

@@ -1,0 +1,1 @@
+python eval.py --save --log_dir '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/laser/logs-original_paper/ckpt' --dataset zind --dataset_path '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/zind/zind_raw'

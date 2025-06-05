@@ -1,0 +1,73 @@
+Train:
+ 
+
+
+Test set (3250 - 3500):
+Weights                        Prediction %    Ground Truth % 
+--------------------------------------------------------------
+Depth=1.0, Semantic=0.0        67.08%          72.84%         
+Depth=0.9, Semantic=0.1        17.31%          20.25%         
+Depth=0.8, Semantic=0.2        7.40%           4.12%          
+Depth=0.7, Semantic=0.3        3.95%           1.65%          
+Depth=0.6, Semantic=0.4        2.52%           0.68%          
+Depth=0.5, Semantic=0.5        1.75%           0.46%    
+
+Default is 0.5 -> update: if pred_best_acc < 1.5 and abs(pred_best_acc-pred_accs_tensor[-1]) > 0.1:
+Weights                        Prediction %    Ground Truth % 
+--------------------------------------------------------------
+Depth=1.0, Semantic=0.0        6.86%           55.08%         
+Depth=0.5, Semantic=0.5        93.14%          44.92%  
+
+Default is 0.5 -> update: if pred_best_acc < 1.1== and abs(pred_best_acc-pred_accs_tensor[-1]) > 0.1:
+Weights                        Prediction %    Ground Truth % 
+--------------------------------------------------------------
+Depth=1.0, Semantic=0.0        5.19%           54.63%         
+Depth=0.9, Semantic=0.1        1.90%           20.38%         
+Depth=0.8, Semantic=0.2        0.76%           4.06%          
+Depth=0.7, Semantic=0.3        0.22%           1.70%          
+Depth=0.6, Semantic=0.4        0.08%           0.63%          
+Depth=0.5, Semantic=0.5        91.85%          18.60%      
+
+Weights                        Prediction %    Ground Truth % 
+--------------------------------------------------------------
+Depth=1.0, Semantic=0.0        5.54%           55.00%         
+Depth=0.5, Semantic=0.5        94.46%          45.00%     
+
+Weights                        Prediction %    Ground Truth % 
+--------------------------------------------------------------
+Depth=1.0, Semantic=0.0        5.00%           54.69%         
+Depth=0.9, Semantic=0.1        1.92%           20.65%         
+Depth=0.5, Semantic=0.5        93.08%          24.66%     
+
+
+Default is 0.5 -> update: if pred_best_acc < 1 and abs(pred_best_acc-pred_accs_tensor[-1]) > 0.05:
+Weights                        Prediction %    Ground Truth % 
+--------------------------------------------------------------
+Depth=1.0, Semantic=0.0        6.36%           54.71%         
+Depth=0.9, Semantic=0.1        2.23%           20.30%         
+Depth=0.8, Semantic=0.2        0.88%           3.90%          
+Depth=0.7, Semantic=0.3        0.38%           1.89%          
+Depth=0.6, Semantic=0.4        0.14%           0.58%          
+Depth=0.5, Semantic=0.5        90.01%          18.62%  
+
+
+Default is 0.5 -> update: if pred_best_acc < 1 and abs(pred_best_acc-pred_accs_tensor[-1]) > 0.5:
+Weights                        Prediction %    Ground Truth % 
+--------------------------------------------------------------
+Depth=1.0, Semantic=0.0        3.21%           54.55%         
+Depth=0.9, Semantic=0.1        1.29%           20.43%         
+Depth=0.8, Semantic=0.2        0.55%           4.11%          
+Depth=0.7, Semantic=0.3        0.20%           1.72%          
+Depth=0.6, Semantic=0.4        0.05%           0.61%          
+Depth=0.5, Semantic=0.5        94.70%          18.59%   
+
+Weights                        Prediction %    Ground Truth % 
+--------------------------------------------------------------
+Depth=1.0, Semantic=0.0        3.38%           54.80%         
+Depth=0.95, Semantic=0.05      0.96%           15.58%         
+Depth=0.9, Semantic=0.1        0.47%           5.56%          
+Depth=0.5, Semantic=0.5        95.18%          24.06%   
+Weights                        Prediction %    Ground Truth % 
+--------------------------------------------------------------
+Depth=1.0, Semantic=0.0        3.60%           55.10%         
+Depth=0.5, Semantic=0.5        96.40%          44.90%  

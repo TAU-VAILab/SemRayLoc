@@ -1,0 +1,30 @@
+# config.yaml
+
+dataset: "test_data_set_full"
+dataset_path: "/home/yuvalg/projects/Semantic_Floor_plan_localization/data/structured3d_panorama"
+ckpt_path: "./logs/pano/random_yaw_train/depth_fix_len"
+epochs: 100
+batch_size: 16
+lr: 0.001
+shape_loss_weight: 20
+
+# Depth net parameters
+depth_net:
+  L: 0
+  D: 128
+  d_min: 0.1
+  d_max: 15.0
+  d_hyp: -0.2
+  F_W: 3 / 5
+
+# Augmentation settings
+augmentation:
+  add_rp: True
+  roll: 0
+  pitch: 0
+
+model_type: "depth"
+use_room_type: True
+num_room_types: 16
+semantic_net_type: "resnet_cls"
+room_data_dir: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/structured3d_panorama/test_data_set_full'

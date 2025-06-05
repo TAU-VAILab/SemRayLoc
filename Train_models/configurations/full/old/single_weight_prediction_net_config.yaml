@@ -1,0 +1,19 @@
+dataset_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full'
+dataset: 'structured3d_perspective_full'  
+prob_vol_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full/prob_vols'
+ckpt_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/logs/weight_predictor_nets/mse_loss_expected_location'  
+
+batch_size: 8
+epochs: 50
+NET_SIZE: 'medium'  # Options: 'small', 'medium', 'large'
+# Options: 'tiny', 'small', 'medium', 'full'
+DATA_SET_SIZE: 'small'
+loss_type: "mse" #nll, mse,nll_region,kl_divergence
+
+L: 0
+lr: 0.0001
+acc_only: True
+pad_all_to_max: True
+max_h: 1760
+max_w: 1760
+
