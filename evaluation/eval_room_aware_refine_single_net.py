@@ -5,7 +5,6 @@ import json
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch.utils.data import DataLoader
 from attrdict import AttrDict
 import math
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -18,7 +17,7 @@ from modules.semantic.semantic_net_pl_maskformer_small_room_type import semantic
 from modules.semantic.semantic_mapper import room_type_to_id, zind_room_type_to_id
 
 # from data_utils.data_utils_for_laser_train import GridSeqDataset
-from data_utils.data_utils import GridSeqDataset
+from data_utils.data_utils import LocalizationDataset
 from data_utils.prob_vol_data_utils import ProbVolDataset
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,10 +27,11 @@ from PIL import Image
 from utils.data_loader_helper import load_scene_data
 from utils.localization_utils import (
     get_ray_from_depth,
-    get_ray_from_semantics_v2,    
+    get_ray_from_semantics,    
     localize,
     finalize_localization,
 )
+
 from utils.result_utils import (
     calculate_recalls,
     create_combined_results_table,
@@ -39,10 +39,6 @@ from utils.result_utils import (
 # If you have your own ray_cast function, import it:
 from utils.raycast_utils import ray_cast
 
-from utils.visualization_utils import plot_prob_dist
-# =============================================================================
-# Utility functions
-# =============================================================================
 def indices_to_radians(orientation_idx: int, num_orientations: int = 36) -> float:
     """
     Convert an orientation index (0..num_orientations-1) to radians [0, 2π).
@@ -169,8 +165,8 @@ def compute_rays_from_candidate(
             if cache_key in candidate_cache:
                 depth_val_m, prediction_class = candidate_cache[cache_key]
             else:
-                depth_val_m, prediction_class, _, _ = ray_cast(
-                    semantic_map, candidate_pos_pixels, ang, dist_max=depth_max * 100, min_dist=5, cast_type=2
+                depth_val_m, prediction_class, _, = ray_cast(
+                    semantic_map, candidate_pos_pixels, ang, dist_max=depth_max * 100, min_dist=5
                 )
                 depth_val_m = depth_val_m / 100.0
                 candidate_cache[cache_key] = (depth_val_m, prediction_class)
@@ -227,11 +223,6 @@ def measure_similarity(
     cand_semantics_int[cand_semantics_int == 3] = 0
     pred_semantics_int[pred_semantics_int == 3] = 0
     
-    # Define the penalty matrix for semantic mismatches.
-    # New indices: 0: wall, 1: door, 2: window.
-    # For ground truth wall (0): penalty when predicted as wall=0, door=1, window=1.
-    # For ground truth door (1): penalty when predicted as door=0, window=2, wall=3.
-    # For ground truth window (2): penalty when predicted as window=0, door=3, wall=5.
     penalty_matrix = np.array([
         [0, 1, 1],  # GT wall (0)
         [2, 0, 0],  # GT door (1)
@@ -254,9 +245,7 @@ def angular_difference_deg(ang1_rad, ang2_rad):
     diff_deg = abs(math.degrees(ang1_rad) - math.degrees(ang2_rad)) % 360
     return min(diff_deg, 360 - diff_deg)
 
-# =============================================================================
-# Main evaluation pipeline supporting multiple weight combinations
-# =============================================================================
+
 def evaluate_room_aware_with_refine(config):
     """
     Main pipeline:
@@ -270,59 +259,46 @@ def evaluate_room_aware_with_refine(config):
     print(f"Running on device: {device}")
 
     # ---------- Load the dataset -----------
-    with open(config.split_file, "r") as f:
+    split_file = config.dataset_dir + "/split.yaml"
+    with open(split_file, "r") as f:
         split = AttrDict(yaml.safe_load(f))
 
     scene_names = split.test[:config.num_of_scenes]
-    # scene_names = split.train[:2]
-    if config.use_saved_prob_vol:
-        test_set = ProbVolDataset(
-            dataset_dir=config.dataset_dir,
-            scene_names=scene_names,
-            L=config.L,
-            prob_vol_path=config.prob_vol_path,
-            acc_only=False,
-        )
-    else: 
-        test_set = GridSeqDataset(
-            dataset_dir=config.dataset_dir,
-            scene_names=scene_names,
-            L=config.L,
-            room_data_dir=config.room_data_dir,     
-        )   
+
+
+    test_set = LocalizationDataset(
+        dataset_dir=config.dataset_dir + "/processed",
+        scene_names=scene_names,        
+    )       
 
 
     # ---------- Load models -----------
     depth_net = None
-    if not config.use_ground_truth_depth or config.prediction_type in ["depth", "combined"]:
+    if not config.use_ground_truth_depth:
         depth_net = depth_net_pl.load_from_checkpoint(
-            checkpoint_path=config.log_dir_depth,
-            d_min=config.d_min,
-            d_max=config.d_max,
-            d_hyp=config.d_hyp,
-            D=config.D,
+            checkpoint_path=config.depth_weights,            
         ).to(device)
         depth_net.eval()
 
     semantic_net = None
-    if not config.use_ground_truth_semantic or config.prediction_type in ["semantic", "combined"]:
+    if not config.use_ground_truth_semantic:
         semantic_net = semantic_net_pl_maskformer_small_room_type.load_from_checkpoint(
-            checkpoint_path=config.log_dir_semantic_and_room_aware,
+            checkpoint_path=config.semantic_weights,
             num_classes=config.num_classes,
-            semantic_net_type=config.semantic_net_type,
             num_room_types=config.num_room_types,
         ).to(device)
         semantic_net.eval()
 
     # Create a directory for results
-    results_type_dir = os.path.join(config.results_dir, config.prediction_type)
+    results_type_dir = os.path.join(config.results_dir)
     if config.use_ground_truth_depth or config.use_ground_truth_semantic:
         results_type_dir = os.path.join(results_type_dir, "gt")
     os.makedirs(results_type_dir, exist_ok=True)
 
     # ---------- Load scene data -----------
-    desdfs, semantics, maps, gt_poses, valid_scene_names, walls = load_scene_data(
-        test_set, config.dataset_dir, config.desdf_path
+    df_dir = config.dataset_dir + "/df"
+    depth_df, semantic_df, maps, gt_poses, valid_scene_names, walls = load_scene_data(
+        test_set, config.dataset_dir + "/processed", df_dir
     )
 
     # Dictionaries to hold recall metrics per weight combination
@@ -368,17 +344,7 @@ def evaluate_room_aware_with_refine(config):
 
             idx_within_scene = data_idx - test_set.scene_start_idx[scene_idx]
             ref_pose_map = gt_poses[scene][idx_within_scene * (config.L + 1) + config.L, :]
-            # ref_pose_map= data["ref_pose"]
-            # Get the reference image from the data dictionary
-            # ref_img = data["original_pano"]
 
-            # # Build the save path for the image
-            # ref_img_save_path = os.path.join(results_type_dir, f"{scene}_{idx_within_scene}_ref_img.png")
-
-            # # Save the image using matplotlib's imsave
-            # plt.imsave(ref_img_save_path, ref_img)    
-            
-            # --- Get depth rays ---
             if not config.use_ground_truth_depth:
                 ref_img_torch = torch.tensor(data["ref_img"], device=device).unsqueeze(0)
                 ref_mask_torch = torch.tensor(data["ref_mask"], device=device).unsqueeze(0)
@@ -401,33 +367,23 @@ def evaluate_room_aware_with_refine(config):
                 sampled_indices = torch.multinomial(prob_squeezed, num_samples=1, replacement=True)
                 sampled_indices = sampled_indices.squeeze(dim=1)
                 sampled_semantic_indices_np = sampled_indices.cpu().numpy()
-                pred_rays_semantic = get_ray_from_semantics_v2(sampled_semantic_indices_np)
+                pred_rays_semantic = get_ray_from_semantics(sampled_semantic_indices_np)
             else:
                 sampled_semantic_indices_np = data["ref_semantics"]
-                pred_rays_semantic = get_ray_from_semantics_v2(sampled_semantic_indices_np)
+                pred_rays_semantic = get_ray_from_semantics(sampled_semantic_indices_np)
 
-            # --- Compute probability volumes ---
-            if not config.use_saved_prob_vol:
-                prob_vol_pred_depth, prob_vol_dist_pred_depth, _, depth_pred = localize(
-                    torch.tensor(desdfs[scene]["desdf"]),
-                    torch.tensor(pred_rays_depth, device="cpu"),
-                    return_np=False,
-                )                               
-                prob_vol_pred_semantic, _, _, _ = localize(
-                    torch.tensor(semantics[scene]["desdf"]),
-                    torch.tensor(pred_rays_semantic, device="cpu"),
-                    return_np=False,
-                    # localize_type="semantic",
-                )
-            else:
-                if config.use_ground_truth_depth:
-                    prob_vol_pred_depth = data['prob_vol_depth_gt'].to(device)
-                else:
-                    prob_vol_pred_depth = data['prob_vol_depth'].to(device)
-                if config.use_ground_truth_semantic:
-                    prob_vol_pred_semantic = data['prob_vol_semantic_gt'].to(device)
-                else:
-                    prob_vol_pred_semantic = data['prob_vol_semantic'].to(device)
+            prob_vol_pred_depth, prob_vol_dist_pred_depth, _, depth_pred = localize(
+                torch.tensor(depth_df[scene]["desdf"]),
+                torch.tensor(pred_rays_depth, device="cpu"),
+                return_np=False,
+            )                               
+            prob_vol_pred_semantic, _, _, _ = localize(
+                torch.tensor(semantic_df[scene]["desdf"]),
+                torch.tensor(pred_rays_semantic, device="cpu"),
+                return_np=False,
+                # localize_type="semantic",
+            )
+
 
             # --- Combine volumes with current weight combination ---
             combined_prob_vol = combine_prob_volumes(
@@ -461,12 +417,10 @@ def evaluate_room_aware_with_refine(config):
                     combined_prob_vol, data["room_polygons"]
                 )
             else:
-                # final_prob_vol, prob_dist_pred, orientation_map, pose_pred = finalize_localization(
-                #     combined_prob_vol, data["room_polygons"]
-                # )
                 final_prob_vol, prob_dist_pred, orientation_map, pose_pred = finalize_localization(
                     combined_prob_vol, []
                 )
+
                 final_prob_vol_n, prob_dist_pred_n, orientation_map_n, pose_pred_n = final_prob_vol, prob_dist_pred, orientation_map, pose_pred
 
             # --- Baseline error (room aware) ---
@@ -493,14 +447,14 @@ def evaluate_room_aware_with_refine(config):
             baseline_rot_errors_n.append(baseline_rot_n)
                             
             # --- Candidate refinement ---
-            # top_k_candidates = extract_top_k_locations(
-            #     prob_dist_pred,
-            #     orientation_map,
-            #     K=top_k,
-            #     min_dist_m=min_dist_m,
-            #     resolution_m_per_pixel=resolution_m_per_pixel,
-            #     num_orientations=36
-            # )
+            top_k_candidates = extract_top_k_locations(
+                prob_dist_pred,
+                orientation_map,
+                K=top_k,
+                min_dist_m=min_dist_m,
+                resolution_m_per_pixel=resolution_m_per_pixel,
+                num_orientations=36
+            )
             
             top_k_candidates_n = extract_top_k_locations(
                 prob_dist_pred_n,
@@ -514,13 +468,7 @@ def evaluate_room_aware_with_refine(config):
             # Augmentation offsets (in radians)
             augmentation_offsets = {
                 "0": 0,
-                # "1": np.deg2rad(1),
-                # "2": np.deg2rad(2),
-                # "3": np.deg2rad(3),
                 "5": np.deg2rad(5),                
-                # "-1": np.deg2rad(-1),
-                # "-2": np.deg2rad(-2),
-                # "-3": np.deg2rad(-3),
                 "-5": np.deg2rad(-5),                
             }
 
@@ -559,23 +507,23 @@ def evaluate_room_aware_with_refine(config):
                 return best_offset_score, cand_x_m, cand_y_m, refined_o
 
             # Process candidates in parallel (room-aware)
-            # best_candidate_score = 1e9
-            # best_candidate_location = None
-            # best_candidate_orientation = None
-            # for cand in top_k_candidates:
-            #     pick_score, cand_x_m, cand_y_m, refined_o = process_candidate(cand)
-            #     if pick_score < best_candidate_score:
-            #         best_candidate_score = pick_score
-            #         best_candidate_location = (cand_x_m, cand_y_m)
-            #         best_candidate_orientation = refined_o
+            best_candidate_score = 1e9
+            best_candidate_location = None
+            best_candidate_orientation = None
+            for cand in top_k_candidates:
+                pick_score, cand_x_m, cand_y_m, refined_o = process_candidate(cand)
+                if pick_score < best_candidate_score:
+                    best_candidate_score = pick_score
+                    best_candidate_location = (cand_x_m, cand_y_m)
+                    best_candidate_orientation = refined_o
 
-            # if best_candidate_location is not None:
-            #     refine_x, refine_y = best_candidate_location
-            #     refine_o = best_candidate_orientation
-            #     refine_trans = np.sqrt((refine_x - gt_x)**2 + (refine_y - gt_y)**2)
-            #     refine_rot = angular_difference_deg(refine_o, gt_o)
-            #     refine_trans_errors.append(refine_trans)
-            #     refine_rot_errors.append(refine_rot)
+            if best_candidate_location is not None:
+                refine_x, refine_y = best_candidate_location
+                refine_o = best_candidate_orientation
+                refine_trans = np.sqrt((refine_x - gt_x)**2 + (refine_y - gt_y)**2)
+                refine_rot = angular_difference_deg(refine_o, gt_o)
+                refine_trans_errors.append(refine_trans)
+                refine_rot_errors.append(refine_rot)
                 
             # Process candidates in parallel (non-room-aware)
             best_candidate_score_n = 1e9
@@ -659,8 +607,8 @@ def main():
     parser.add_argument(
         "--config_file",
         type=str,
-        # default="evaluation/configuration/S3D/config_eval.yaml",
-        default="evaluation/configuration/zind/config_eval.yaml",
+        default="evaluation/configuration/S3D/config_eval.yaml",
+        # default="evaluation/configuration/zind/config_eval.yaml",
         help="Path to the configuration file",
     )
     args = parser.parse_args()

@@ -1,31 +1,12 @@
 # evaluation/configuration/config.yaml
 
 # Paths
-dataset_dir: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/structured3d_perspective/test_data_set_full'
-desdf_path: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/structured3d/desdf'
-log_dir_depth: '/home/yuvalg/projects/Semantic_Floor_plan_localization/modules/final_weights/depth/final_depth_model_checkpoint.ckpt'
-# log_dir_depth: '/home/yuvalg/projects/Semantic_Floor_plan_localization/logs/perspective/closed_doors/depth/depth_net-epoch=39-loss-valid=0.30.ckpt' #closed doors
-log_dir_semantic: '/home/yuvalg/projects/Semantic_Floor_plan_localization/modules/final_weights/semantic/final_semantic_model_checkpoint.ckpt'
-
-
-split_file: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/structured3d_perspective/test_data_set_full/split.yaml'
-prob_vol_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/data/test_data_set_full/prob_vols_mask2former'
-#------------------------------------------
-results_dir: '/home/yuvalg/projects/Semantic_Floor_plan_localization/results/s3d_perspective/test_set/open_doors_experiment'
-
-# ------------------------------------------
-combined_prob_vols_net_path: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/logs/combined/expected_pose_pred/combined_prob_vols_net_type-expected_pose_pred_net_size-6k_dataset_size-medium_epochs-99/combined_net-epoch=58-loss-valid=7.16.ckpt'
-combined_net_size: "6k"
+dataset_dir: 'Data\S3D'
+depth_weights: 'modules\weights\s3d\final_depth.ckpt'
+semantic_weights: 'modules\weights\s3d\final_semantic.ckpt'
 
 #------------------------------------------
-# Dataset parameters
-L: 0
-
-# Depth network parameters
-D: 128
-d_min: 0.1
-d_max: 15.0
-d_hyp: -0.2
+results_dir: 'results\s3d_perspective\test_set\open_doors_experiment'
 
 #Localize:
 F_W: 0.59587643422
@@ -35,13 +16,9 @@ V: 9
 num_classes: 4
 
 # Evaluation parameters
-prediction_type: 'combined'  # Options: 'depth', 'semantic', 'combined', 'all'
 use_ground_truth_depth: false  # Set to true to use ground truth depth
 use_ground_truth_semantic: false  # Set to true to use ground truth semantics
-use_saved_prob_vol: false
 num_of_scenes: -1
-max_h: 1760
-max_w: 1760
 
 # Weight combinations for combined evaluation
 weight_combinations:
@@ -57,19 +34,13 @@ weight_combinations:
   # - [0.1, 0.9]
   # - [0, 1.0]  # Only Semantic
 
+# refine parameters
 top_k: 5
-
-log_dir_semantic_maskformer: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/logs/mask2Former_semantics_with_small_50k_no_augmentaion/semantic/semantic_net-epoch=15-loss-valid=0.32.ckpt'
-use_maskformer: true
-
-log_dir_semantic_maskformer_small: '/datadrive2/CRM.AI.Research/TeamFolders/Email/repo_yuval/FloorPlan/Semantic_Floor_plan_localization/modules/Final_wights/semantic/mask2former_tiny_50k_semantic_net-epoch=19-loss-valid=0.34.ckpt'
-use_small_maskformer: true
+min_dist_m: 0.1              # Minimum distance in meters
+alpha_similarity: 0.3        # Alpha similarity threshold
+resolution_m_per_pixel: 0.1  # Resolution in meters per pixel
 
 use_room_aware: true
-room_aware_checkpoint:  '/home/yuvalg/projects/Semantic_Floor_plan_localization/modules/final_weights/semantic/semantic_net-epoch=14-loss-valid=1.31.ckpt'
 room_selection_threshold: 0.8
 num_room_types: 16
 
-log_dir_semantic_and_room_aware:  '/home/yuvalg/projects/Semantic_Floor_plan_localization/modules/final_weights/semantic/semantic_net-epoch=14-loss-valid=1.31.ckpt'
-semantic_net_type: "resnet_cls"
-room_data_dir: '/home/yuvalg/projects/Semantic_Floor_plan_localization/data/structured3d_perspective/test_data_set_full'

@@ -5,9 +5,9 @@ import cv2
 import numpy as np
 import tqdm
 
-def load_scene_data(test_set, dataset_dir, desdf_path,use_walls=True):
-    desdfs = {}
-    semantics = {}
+def load_scene_data(test_set, dataset_dir, df_path,use_walls=True):
+    depth_df = {}
+    semantic_df = {}
     maps = {}
     walls = {}
     gt_poses = {}
@@ -21,9 +21,8 @@ def load_scene_data(test_set, dataset_dir, desdf_path,use_walls=True):
                 scene_number = int(scene.split('_')[1])
                 scene = f"scene_{scene_number}"
             
-            # desdf = np.load(os.path.join(desdf_path, scene, "desdf_closed_doors.npy"), allow_pickle=True) # closed doors
-            desdf = np.load(os.path.join(desdf_path, scene, "desdf.npy"), allow_pickle=True) 
-            semantic = np.load(os.path.join(desdf_path, scene, "color.npy"), allow_pickle=True)
+            depth_df = np.load(os.path.join(df_path, scene, "depth_df.npy"), allow_pickle=True) 
+            semantic_df = np.load(os.path.join(df_path, scene, "semantic_df.npy"), allow_pickle=True)
             occ_sem = cv2.imread(os.path.join(dataset_dir, scene, "floorplan_semantic.png"))
             occ_sem_rgb = cv2.cvtColor(occ_sem, cv2.COLOR_BGR2RGB)
             if use_walls:
@@ -31,8 +30,8 @@ def load_scene_data(test_set, dataset_dir, desdf_path,use_walls=True):
             else:
                 occ_walls = None
             
-            desdfs[scene] = desdf.item()
-            semantics[scene] = semantic.item()
+            depth_df[scene] = depth_df.item()
+            semantic_df[scene] = semantic_df.item()
             maps[scene] = occ_sem_rgb
             walls[scene] = occ_walls
 
@@ -53,4 +52,4 @@ def load_scene_data(test_set, dataset_dir, desdf_path,use_walls=True):
             continue
 
     # print(f"number of valid scenes for evaluation: {len(valid_scene_names)} out of: {len(test_set.scene_names)} --> {(len(valid_scene_names)/len(test_set.scene_names))*100}%")
-    return desdfs, semantics, maps, gt_poses, valid_scene_names, walls
+    return depth_df, semantic_df, maps, gt_poses, valid_scene_names, walls

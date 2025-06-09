@@ -18,7 +18,7 @@ from modules.semantic.semantic_net_pl_maskformer_small_room_type import semantic
 from modules.semantic.room_type_net_pl import room_type_net_pl
 from modules.semantic.room_type_pred.room_type_pred_no_backbone_pl import room_type_pred_no_backbone_pl
 from modules.semantic.room_type_pred.room_type_pred_resnet50_pl import room_type_pred_resnet50_pl
-from data_utils.data_utils import GridSeqDataset
+from data_utils.data_utils import LocalizationDataset
 # from data_utils.data_utils_for_laser_train_s3d import GridSeqDataset # panorama
 
 def load_config(config_path):
@@ -28,14 +28,14 @@ def load_config(config_path):
 
 def setup_dataset_and_loader(config, dataset_dir, split):
     """Set up dataset and dataloader based on configuration."""
-    train_set = GridSeqDataset(
+    train_set = LocalizationDataset(
         dataset_dir,
         split.train,
         L=config.depth_net.L,
         room_data_dir= config.room_data_dir,           
     )
 
-    val_set = GridSeqDataset(
+    val_set = LocalizationDataset(
         dataset_dir,
         split.val,
         L=config.depth_net.L,

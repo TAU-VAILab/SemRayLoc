@@ -425,36 +425,9 @@ def get_ray_from_depth(d, V=9, dv=10, a0=None, F_W=1/np.tan(0.698132)/2):
 
     return rays
 
-def get_ray_from_semantics(semantics, V=7, dv=10, a0=None, F_W=1/np.tan(0.698132)/2):
-    """
-    Shoot the rays to the semantics, from left to right
-    Input:
-        V: number of rays
-        dv: angle between two neighboring rays (in degrees)
-        a0: camera intrinsic (center of the image by default)
-        F/W: focal length / image width ratio
-    Output:
-        rays: interpolated rays for semantics
-    """
-    W = semantics.shape[0]
-    angles = (np.arange(0, V) - np.arange(0, V).mean()) * dv / 180 * np.pi
-
-    if a0 is None:
-        # assume a0 is in the middle of the image
-        w = np.tan(angles) * W * F_W + (W - 1) / 2  # desired width, left to right
-    else:
-        w = np.tan(angles) * W * F_W + a0  # left to right
-    # w=np.linspace(0, 39, 21)
-    # w = np.clip(w, 0, W-1)
-    # Interpolating semantics across the desired angles
-    interp_semantics = griddata(np.arange(W).reshape(-1, 1), semantics, w, method="linear", fill_value=0)
-    rays = np.round(interp_semantics).astype(int)  # Convert interpolated values to nearest integer to get the semantics
-
-    return rays
-
 from collections import Counter
 
-def get_ray_from_semantics_v2(original_rays, angle_between_rays=80/40, desired_ray_count=9, window_size=1):
+def get_ray_from_semantics(original_rays, angle_between_rays=80/40, desired_ray_count=9, window_size=1):
     desired_angle_step = 10  
 
     representative_rays = []
