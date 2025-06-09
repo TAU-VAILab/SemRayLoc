@@ -4,18 +4,475 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:image" content="https://your-username.github.io/semantic-floor-plan-localization/assets/images/teaser.jpg" />
-  <meta property="og:title" content="Semantic Floor Plan Localization" />
+  <meta property="og:image" content="https://tau-vailab.github.io/SuperchargingFloorplanLocalizationWithSemanticRays/assets/images/teaser.jpg" />
+  <meta property="og:title" content="Supercharging Floorplan Localization with Semantic Rays" />
   <meta property="og:description" content="A novel approach to indoor localization using semantic understanding of floor plans and visual features." />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
     integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="web/style.css">
-  <title>Semantic Floor Plan Localization</title>
+  <title>Supercharging Floorplan Localization with Semantic Rays</title>
+  <style>
+    .container {
+      max-width: 1000px !important;
+    }
+    .title-text {
+      font-size: 2.5rem;
+      line-height: 1.2;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .demo-container {
+      background: #f8f9fa;
+      padding: 2rem;
+      border-radius: 10px;
+      margin: 2rem 0;
+      position: relative;
+    }
+    .demo-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+      flex-direction: column;
+    }
+    .demo-items-container {
+      display: flex;
+      gap: 1rem;
+      transition: transform 0.3s ease;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      width: 100%;
+    }
+    .demo-item {
+      flex: 0 0 auto;
+      cursor: pointer;
+      border: 2px solid #dee2e6;
+      border-radius: 5px;
+      transition: all 0.2s;
+      overflow: hidden;
+    }
+    .demo-item:hover {
+      border-color: #0d6efd;
+      transform: translateY(-2px);
+    }
+    .demo-item.active {
+      border-color: #0d6efd;
+      box-shadow: 0 0 10px rgba(13, 110, 253, 0.3);
+    }
+    .demo-item img {
+      display: block;
+      width: auto;
+      height: auto;
+      max-width: none;
+    }
+    .demo-display {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .demo-display img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .mode-buttons {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem 0;
+      justify-content: center;
+      align-items: center;
+    }
+    .mode-button {
+      padding: 0.5rem 1rem;
+      border: 2px solid #dee2e6;
+      border-radius: 5px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 120px;
+      text-align: center;
+    }
+    .mode-button:hover {
+      border-color: #0d6efd;
+      background: #f8f9fa;
+    }
+    .mode-button.active {
+      background: #0d6efd;
+      color: white;
+      border-color: #0d6efd;
+    }
+    .mode-button.completed {
+      background: #e7f1ff;
+      border-color: #0d6efd;
+      color: #0d6efd;
+    }
+    .arrow-legend {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .legend-arrow {
+      width: 30px;
+      height: 4px;
+      position: relative;
+      border: 1px solid black;
+    }
+    .legend-arrow::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      border-left: 8px solid currentColor;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      filter: drop-shadow(0 0 1px black);
+    }
+    .legend-arrow.magenta {
+      background: #ff00ff;
+      border-color: black;
+    }
+    .legend-arrow.magenta::after {
+      border-left-color: #ff00ff;
+    }
+    .legend-arrow.white {
+      background: white;
+      border-color: black;
+    }
+    .legend-arrow.white::after {
+      border-left-color: white;
+    }
+    .scroll-bar, .scroll-thumb { display: none !important; }
+  </style>
 </head>
 
-<body class="container" style="max-width:840px">
+<body class="container">
+
+  <!-- title -->
+  <div class='row mt-5 mb-3'>
+    <div class='col text-center'>
+      <h1 class="display-4 font-weight-bold title-text">Supercharging Floorplan Localization with Semantic Rays</h1>
+      <p class="lead mt-3">A Novel Approach to Indoor Localization Using Semantic Understanding</p>
+    </div>
+  </div>
+
+  <!-- authors -->
+  <div class="col text-center h5 font-weight-bold mb-2">
+    <span><a class="col-md-4 col-xs-6 pb-2" href="#">Yuval Grader</a></span>
+    <span><a class="col-md-4 col-xs-6 pb-2" href="https://www.elor.sites.tau.ac.il/">Hadar Averbuch-Elor</a></span>
+  </div>
+
+  <!-- affiliations -->
+  <div class='row mb-3'>
+    <div class='col text-center'>
+      <p class="h6">
+        <a href="https://english.tau.ac.il/"><span>Tel Aviv University</span></a>
+        <span class="mx-2">|</span>
+        <a href="https://www.cornell.edu/"><span>Cornell University</span></a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Teaser Section: Single Image -->
+  <div class="teaser-section mb-4 text-center">
+    <img src="assets/images/teaser/Teaser.png" alt="Teaser" style="max-width:100%;height:auto;">
+  </div>
+
+  <!-- TL;DR section -->
+  <div class='col-md-12 col-sm-12 col-xs-12 align-middle mt-1'>
+    <p class="text-break">
+      <b>TL;DR:</b> We introduce a novel floorplan localization framework that leverages both semantic and depth information. Our approach uses semantic rays to capture important structural elements like windows and doors, combined with depth cues for accurate camera pose estimation. The method employs a coarse-to-fine strategy, first sampling a small set of rays for initial localization, then refining in high-probability regions. Our experiments show significant improvements over state-of-the-art methods, with the added benefit of easily incorporating room labels for enhanced accuracy.
+    </p>
+  </div>
+
+  <!-- Improved Interactive Demo Section -->
+  <div class="container my-5" id="interactive-demo">
+    <h3 class="mb-3">Interactive Demo</h3>
+    <!-- Floorplan selection row -->
+    <div class="demo-container">
+      <div class="demo-row" id="floorplanRow">
+        <!-- Floorplan thumbnails will be added here -->
+      </div>
+      <!-- Image selection row -->
+      <div class="demo-row" id="imageRow">
+        <!-- Image thumbnails will be added here -->
+      </div>
+      <!-- Mode selection row -->
+      <div class="mode-buttons">
+        <button class="mode-button" data-mode="depth">Depth Only</button>
+        <button class="mode-button" data-mode="semantics">+ Semantic</button>
+        <button class="mode-button" data-mode="room-aware">+ Room Aware</button>
+        <button class="mode-button" data-mode="refine">+ Refine</button>
+      </div>
+      <!-- Probability map display -->
+      <div class="demo-display">
+        <img id="mainDisplay" src="" alt="Selected visualization">
+      </div>
+      <!-- Arrow legend -->
+      <div class="arrow-legend">
+        <div class="legend-item">
+          <div class="legend-arrow magenta"></div>
+          <span>Ground Truth</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-arrow white"></div>
+          <span>Prediction</span>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-info mt-3" style="display:none;"></div>
+  </div>
+  <script>
+  // Improved interactive demo JS
+  const floorplans = [
+    { key: '3451', thumb: 'assets/demo/3451/3451_floorplan_semantic.jpg', images: ['2', '16', '30', '31', '34'] },
+    { key: '3455', thumb: 'assets/demo/3455/floorplan_semantic.png', images: ['0', '2', '3', '4', '5', '8', '15', '21', '23'] },
+    { key: '3461', thumb: 'assets/demo/3461/floorplan_semantic.png', images: ['7', '16', '18', '20', '23', '26', '30', '32'] },
+    { key: '3465', thumb: 'assets/demo/3465/floorplan_semantic.png', images: ['7', '8', '23', '24'] },
+    { key: '3489', thumb: 'assets/demo/3489/floorplan_semantic.png', images: ['6', '8', '11', '16', '26'] }
+  ];
+  const modeOrder = ['depth', 'semantics', 'room-aware', 'refine'];
+  const modeToSuffix3451 = {
+    depth: 'depth',
+    semantics: 'no_room_aware',
+    'room-aware': 'with_room_aware',
+    refine: 'with_refine'
+  };
+  const modeToSuffix3455 = modeToSuffix3451;
+  const modeToSuffix3461 = modeToSuffix3451;
+
+  let selectedFloorplan = '3451';
+  let selectedImage = '2';
+  let selectedMode = 'depth';
+
+  // Add global index for selected floorplan
+  let selectedFloorplanIdx = floorplans.findIndex(f => f.key === selectedFloorplan);
+
+  function updateImageThumbnails() {
+    const fp = floorplans.find(f => f.key === selectedFloorplan);
+    const row = document.getElementById('imageRow');
+    row.innerHTML = '';
+    
+    // Create container for items
+    const container = document.createElement('div');
+    container.className = 'demo-items-container';
+    container.style.display = 'flex';
+    container.style.flexWrap = 'wrap';
+    container.style.justifyContent = 'center';
+    container.style.gap = '12px';
+    
+    // Show images in two rows, smaller size
+    const imgWidth = 220;
+    const imgHeight = 123.75;
+    fp.images.forEach((img, idx) => {
+      let imgSrc = selectedFloorplan === '3451'
+        ? `assets/demo/3451/${img}.png`
+        : selectedFloorplan === '3455'
+          ? `assets/demo/3455/${img}.png`
+          : selectedFloorplan === '3461'
+            ? `assets/demo/3461/${img}.png`
+            : selectedFloorplan === '3465'
+              ? `assets/demo/3465/${img}.png`
+              : selectedFloorplan === '3489'
+                ? `assets/demo/3489/${img}.png`
+                : '';
+      const el = document.createElement('img');
+      el.src = imgSrc;
+      el.className = 'demo-item' + (img === selectedImage ? ' active' : '');
+      el.style = `width: ${imgWidth}px; height: ${imgHeight}px; max-width: none; cursor: pointer; border-width: 3px;`;
+      el.setAttribute('data-image', img);
+      el.onclick = () => { selectedImage = img; updateImageThumbnails(); updateMapImage(); };
+      container.appendChild(el);
+    });
+    row.appendChild(container);
+  }
+
+  function updateFloorplanThumbnails() {
+    const floorplanRow = document.getElementById('floorplanRow');
+    floorplanRow.innerHTML = '';
+
+    // Create container for single floorplan
+    const container = document.createElement('div');
+    container.className = 'demo-items-container';
+    container.style.display = 'flex';
+    container.style.flexWrap = 'nowrap';
+    container.style.justifyContent = 'center';
+    container.style.alignItems = 'center';
+    container.style.gap = '32px';
+
+    // Left arrow
+    const leftArrow = document.createElement('button');
+    leftArrow.innerHTML = '&#8592;';
+    leftArrow.className = 'fp-arrow';
+    leftArrow.style.fontSize = '2rem';
+    leftArrow.style.width = '48px';
+    leftArrow.style.height = '48px';
+    leftArrow.style.borderRadius = '50%';
+    leftArrow.style.background = '#f0f4fa';
+    leftArrow.style.border = 'none';
+    leftArrow.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+    leftArrow.style.display = 'flex';
+    leftArrow.style.alignItems = 'center';
+    leftArrow.style.justifyContent = 'center';
+    leftArrow.style.transition = 'background 0.2s, box-shadow 0.2s';
+    leftArrow.style.cursor = 'pointer';
+    leftArrow.onmouseenter = () => { leftArrow.style.background = '#e0e7ef'; leftArrow.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)'; };
+    leftArrow.onmouseleave = () => { leftArrow.style.background = '#f0f4fa'; leftArrow.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'; };
+    leftArrow.onclick = () => {
+      selectedFloorplanIdx = (selectedFloorplanIdx - 1 + floorplans.length) % floorplans.length;
+      selectedFloorplan = floorplans[selectedFloorplanIdx].key;
+      selectedImage = floorplans[selectedFloorplanIdx].images[0];
+      updateFloorplanThumbnails();
+      updateImageThumbnails();
+      updateMapImage();
+    };
+    container.appendChild(leftArrow);
+
+    // Show only the selected floorplan in the middle
+    const fp = floorplans[selectedFloorplanIdx];
+    const el = document.createElement('img');
+    el.src = fp.thumb;
+    el.className = 'demo-item active';
+    el.style = 'height: 300px; width: auto; max-width: 540px; cursor: pointer; border-width: 3px; object-fit: contain; box-shadow: 0 4px 24px rgba(0,0,0,0.10); background: #fff; border-radius: 10px;';
+    container.appendChild(el);
+
+    // Right arrow
+    const rightArrow = document.createElement('button');
+    rightArrow.innerHTML = '&#8594;';
+    rightArrow.className = 'fp-arrow';
+    rightArrow.style.fontSize = '2rem';
+    rightArrow.style.width = '48px';
+    rightArrow.style.height = '48px';
+    rightArrow.style.borderRadius = '50%';
+    rightArrow.style.background = '#f0f4fa';
+    rightArrow.style.border = 'none';
+    rightArrow.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+    rightArrow.style.display = 'flex';
+    rightArrow.style.alignItems = 'center';
+    rightArrow.style.justifyContent = 'center';
+    rightArrow.style.transition = 'background 0.2s, box-shadow 0.2s';
+    rightArrow.style.cursor = 'pointer';
+    rightArrow.onmouseenter = () => { rightArrow.style.background = '#e0e7ef'; rightArrow.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)'; };
+    rightArrow.onmouseleave = () => { rightArrow.style.background = '#f0f4fa'; rightArrow.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'; };
+    rightArrow.onclick = () => {
+      selectedFloorplanIdx = (selectedFloorplanIdx + 1) % floorplans.length;
+      selectedFloorplan = floorplans[selectedFloorplanIdx].key;
+      selectedImage = floorplans[selectedFloorplanIdx].images[0];
+      updateFloorplanThumbnails();
+      updateImageThumbnails();
+      updateMapImage();
+    };
+    container.appendChild(rightArrow);
+
+    floorplanRow.appendChild(container);
+  }
+
+  function updateModeButtons() {
+    const btns = document.querySelectorAll('.mode-button');
+    let found = false;
+    btns.forEach((btn, idx) => {
+      const mode = btn.getAttribute('data-mode');
+      if (modeOrder.indexOf(mode) <= modeOrder.indexOf(selectedMode)) {
+        btn.style.backgroundColor = '#007bff';
+        btn.style.color = 'white';
+        btn.style.borderColor = '#007bff';
+      } else {
+        btn.style.backgroundColor = '';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }
+      btn.onclick = () => { selectedMode = mode; updateModeButtons(); updateMapImage(); };
+      // Always update map on click, even if already selected
+      btn.addEventListener('click', () => { updateMapImage(); });
+    });
+  }
+
+  function updateMapImage() {
+    const mapImg = document.getElementById('mainDisplay');
+    let fileName = '';
+    if (selectedFloorplan === '3451') {
+      const mapSuffix = modeToSuffix3451[selectedMode] || 'depth';
+      mapImg.src = `assets/demo/3451/scene_3451-${selectedImage}_${mapSuffix}.png`;
+      mapImg.alt = `3451 ${selectedImage} ${selectedMode}`;
+      fileName = `assets/demo/3451/scene_3451-${selectedImage}_${mapSuffix}.png`;
+    } else if (selectedFloorplan === '3455') {
+      const mapSuffix = modeToSuffix3455[selectedMode] || 'depth';
+      mapImg.src = `assets/demo/3455/scene_3455-${selectedImage}_${mapSuffix}.png`;
+      mapImg.alt = `3455 ${selectedImage} ${selectedMode}`;
+      fileName = `assets/demo/3455/scene_3455-${selectedImage}_${mapSuffix}.png`;
+    } else if (selectedFloorplan === '3461') {
+      const mapSuffix = modeToSuffix3461[selectedMode] || 'depth';
+      mapImg.src = `assets/demo/3461/scene_3461-${selectedImage}_${mapSuffix}.png`;
+      mapImg.alt = `3461 ${selectedImage} ${selectedMode}`;
+      fileName = `assets/demo/3461/scene_3461-${selectedImage}_${mapSuffix}.png`;
+    } else if (selectedFloorplan === '3465') {
+      const mapSuffix = modeToSuffix3451[selectedMode] || 'depth';
+      mapImg.src = `assets/demo/3465/scene_3465-${selectedImage}_${mapSuffix}.png`;
+      mapImg.alt = `3465 ${selectedImage} ${selectedMode}`;
+      fileName = `assets/demo/3465/scene_3465-${selectedImage}_${mapSuffix}.png`;
+    } else if (selectedFloorplan === '3489') {
+      const mapSuffix = modeToSuffix3451[selectedMode] || 'depth';
+      mapImg.src = `assets/demo/3489/scene_3489-${selectedImage}_${mapSuffix}.png`;
+      mapImg.alt = `3489 ${selectedImage} ${selectedMode}`;
+      fileName = `assets/demo/3489/scene_3489-${selectedImage}_${mapSuffix}.png`;
+    } else {
+      mapImg.src = `assets/demo/maps/${selectedFloorplan}_${selectedImage}_${selectedMode}.png`;
+      mapImg.alt = `${selectedFloorplan} ${selectedImage} ${selectedMode}`;
+      fileName = `assets/demo/maps/${selectedFloorplan}_${selectedImage}_${selectedMode}.png`;
+    }
+    // Remove file name div if it exists
+    let fileNameDiv = document.getElementById('mapFileName');
+    if (fileNameDiv) {
+      fileNameDiv.remove();
+    }
+  }
+
+  // On initial load, set selectedFloorplanIdx to match selectedFloorplan
+  selectedFloorplanIdx = floorplans.findIndex(f => f.key === selectedFloorplan);
+
+  // Initial render (ensure these are called on page load)
+  updateFloorplanThumbnails();
+  updateImageThumbnails();
+  updateModeButtons();
+  updateMapImage();
+
+  // Update display function to maintain aspect ratio
+  function updateDisplay() {
+    const mainDisplay = document.getElementById('mainDisplay');
+    if (selectedImage && selectedMode) {
+      const imagePath = `assets/demo/${selectedFloorplan}/${selectedImage}_${selectedMode}.png`;
+      mainDisplay.src = imagePath;
+      mainDisplay.style.width = 'auto';
+      mainDisplay.style.height = 'auto';
+      mainDisplay.style.maxWidth = '100%';
+    }
+  }
+
+  // Update thumbnail creation to maintain aspect ratio
+  function createThumbnail(src, isActive = false) {
+    const div = document.createElement('div');
+    div.className = `demo-item ${isActive ? 'active' : ''}`;
+    
+    const img = document.createElement('img');
+    img.src = src;
+    img.style.width = 'auto';
+    img.style.height = 'auto';
+    img.style.maxWidth = 'none';
+    
+    div.appendChild(img);
+    return div;
+  }
+  </script>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -24,134 +481,56 @@
     integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
     crossorigin="anonymous"></script>
 
-  <!-- heading -->
-  <div>
-    <!-- title -->
-    <div class='row mt-5 mb-3'>
-      <div class='col text-center'>
-        <p class="h2 font-weight-normal">Semantic Floor Plan Localization</p>
-      </div>
-    </div>
-
-    <!-- authors -->
-    <div class="col text-center h6 font-weight-bold mb-2">
-      <span><a class="col-md-4 col-xs-6 pb-2" href="#">Your Name</a></span>
-      <span><a class="col-md-4 col-xs-6 pb-2" href="#">Co-Author Name</a></span>
-    </div>
-
-    <!-- affiliations -->
-    <div class='row mb-1'>
-      <div class='col text-center'>
-        <p class="h6">
-          <a href="#"><span>Your Institution</span></a>
-        </p>
-      </div>
-    </div>
-
-    <!-- links -->
-    <div class='row mb-4'>
-      <div class='col text-center'>
-        <a href="#" target="_blank" class="btn btn-outline-primary" role="button">
-          <i class="ai ai-arxiv"></i>
-          arXiv
-        </a>
-        <a href="https://github.com/your-username/semantic-floor-plan-localization" target="_blank" class="btn btn-outline-primary"
-          role="button">
-          <i class="fa fa-github"></i>
-          Code
-        </a>
-        <a href="#gallery" class="btn btn-outline-primary" role="button">
-          <i class="fa fa-picture-o"></i>
-          Gallery
-        </a>
-      </div>
-    </div>
-
-    <!-- teaser -->
-    <div class='row justify-content-center'>
-      <div class="card teaser teaser_img_card">
-        <img src="assets/images/teaser.jpg" class="img-fluid rounded mx-auto d-block teaser_img">
-        <p class="teaser_desc">Semantic Understanding</p>
-      </div>
-      <div class="card teaser teaser_img_card">
-        <img src="assets/images/floor_plan.jpg" class="img-fluid rounded mx-auto d-block teaser_img">
-        <p class="teaser_desc">Floor Plan Analysis</p>
-      </div>
-      <div class="card teaser teaser_img_card">
-        <img src="assets/images/localization.jpg" class="img-fluid rounded mx-auto d-block teaser_img">
-        <p class="teaser_desc">Precise Localization</p>
-      </div>
-
-      <div class='text-center col-md-12 col-sm-12 col-xs-12 align-middle mt-1'>
-        <p class='h6'>
-          <em>
-            Our approach combines semantic understanding of floor plans with visual features
-            <br>
-            to achieve accurate indoor localization.
-          </em>
-        </p>
-      </div>
-
-      <div class='col-md-12 col-sm-12 col-xs-12 align-middle mt-1'>
-        <p class="text-break">
-          <b>TL;DR:</b> We present a novel approach to indoor localization that leverages semantic understanding of floor plans
-          and visual features. Our method achieves state-of-the-art performance by combining deep learning-based semantic
-          segmentation with geometric reasoning to accurately localize users within indoor environments.
-        </p>
-      </div>
-    </div>
-  </div>
-
   <!-- abstract -->
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <p class="h4 font-weight-bold title">Abstract</p>
       <p class="abstract">
-        Indoor localization is a fundamental challenge in robotics and augmented reality applications. Traditional approaches
-        often rely on geometric features or require extensive infrastructure. We propose a novel approach that leverages
-        semantic understanding of floor plans and visual features to achieve accurate indoor localization. Our method
-        combines deep learning-based semantic segmentation with geometric reasoning to match visual observations with
-        floor plan elements. We demonstrate that this semantic understanding significantly improves localization accuracy
-        compared to purely geometric approaches. Our experiments on multiple datasets show that our method achieves
-        state-of-the-art performance while being more robust to environmental changes and requiring less infrastructure
-        than traditional approaches.
+        Floorplans provide a compact representation of the building's structure, revealing not only layout information but also detailed semantics such as the locations of windows and doors. However, contemporary floorplan localization techniques mostly focus on matching depth-based structural cues, ignoring the rich semantics communicated within floorplans. In this work, we introduce a semantic-aware localization framework that jointly estimates depth and semantic rays, consolidating over both for predicting a structural-semantic probability volume. Our probability volume is constructed in a coarse-to-fine manner: We first sample a small set of rays to obtain an initial low-resolution probability volume. We then refine these probabilities by performing a denser sampling only in high-probability regions and process the refined values for predicting a 2D location and orientation angle. We conduct an evaluation on two standard floorplan localization benchmarks. Our experiments demonstrate that our approach substantially outperforms state-of-the-art methods, achieving significant improvements in recall metrics compared to prior works. Moreover, we demonstrate that our framework can easily incorporate additional metadata such as room labels, enabling additional gains in both accuracy and efficiency.
       </p>
     </div>
   </div>
 
-  <!-- gallery -->
-  <div>
-    <hr>
-    <div class="row" id="gallery">
-      <div class='col-md-12 col-sm-12 col-xs-12'>
-        <p class='h4 font-weight-bold title'>Results Gallery</p>
-        <p class="gall-text">
-          Our method achieves accurate localization across various indoor environments.
-          Select a scene to see detailed results.
-        </p>
-        <select id="gall-select" class="custom-select custom-select-lg mb-3">
-          <option selected value="none">Select a scene</option>
-          <option value="scene1">Office Environment</option>
-          <option value="scene2">Residential Space</option>
-          <option value="scene3">Commercial Building</option>
-        </select>
-        <div id="gall-img"></div>
+  <!-- methods -->
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <p class="h4 font-weight-bold title">Method</p>
+      <p class="abstract">
+        Our framework introduces a semantic-aware localization approach that combines depth and semantic information for accurate camera pose estimation. The method consists of three main components:
+      </p>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <h5>Semantic Rays Prediction</h5>
+          <p>We predict semantic rays that capture important structural elements like windows and doors, represented as discrete classes. This is achieved through a network architecture that leverages a pretrained ResNet50 backbone and attention mechanisms.</p>
+        </div>
+        <div class="col-md-4">
+          <h5>Probability Volume Construction</h5>
+          <p>We construct a structural-semantic probability volume by fusing depth and semantic cues. The volume is built in a coarse-to-fine manner, first sampling a small set of rays, then refining in high-probability regions.</p>
+        </div>
+        <div class="col-md-4">
+          <h5>Location Extraction</h5>
+          <p>We employ a coarse-to-fine strategy for precise localization. The process involves extracting top-k candidates, generating augmented orientations, and comparing high-resolution ground-truth rays with predictions.</p>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-12 text-center">
+          <img src="assets/images/methods/pipe.jpg" alt="Method Pipeline" style="max-width:100%;height:auto;">
+          <div class="mt-2" style="font-size:1.15rem; color:#555;">Figure: Overview of our semantic-aware floorplan localization pipeline. The framework combines depth and semantic ray predictions to construct a structural-semantic probability volume for accurate 2D localization and orientation estimation.</div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-12 text-center">
+          <img src="assets/images/methods/net.jpg" alt="Semantic Network" style="max-width:100%;height:auto;">
+          <div class="mt-2" style="font-size:1.15rem; color:#555;">Figure: Architecture of the semantic ray prediction network. The network uses a ResNet backbone and attention-based token extraction to predict semantic rays and (optionally) room type probabilities.</div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-12">
+          <p style="font-size:1.05rem;"><b>Room-aware branch:</b> Our semantic network can optionally predict the room type from which the input image was taken. If the predicted room probability is high, a mask is applied to the probability volume, retaining only the regions corresponding to the predicted room. This narrows down the search space and improves localization accuracy, especially in environments with multiple similar rooms.</p>
+          <p style="font-size:1.05rem;"><b>Coarse-to-fine localization:</b> To balance accuracy and efficiency, our method first computes a low-resolution probability volume to identify high-probability regions. It then refines the localization by performing a denser search only in these regions, using high-resolution ray comparisons. This two-stage process enables precise localization while keeping computation tractable.</p>
+        </div>
       </div>
     </div>
-    <hr>
-  </div>
-
-  <!-- ack -->
-  <div>
-    <div class="row">
-      <div class='col-md-12 col-sm-12 col-xs-12'>
-        <p class='h4 font-weight-bold title'>Acknowledgements</p>
-        <p class="ack">
-          This work was supported by [Your Funding Sources]. We thank [Names] for their helpful feedback and discussions.
-        </p>
-      </div>
-    </div>
-    <hr>
   </div>
 
   <!-- citation -->
@@ -166,8 +545,6 @@
 }</code></pre>
     </div>
   </div>
-
-  <script src="web/gallery.js"></script>
 
 </body>
 
