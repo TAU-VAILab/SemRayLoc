@@ -6,8 +6,8 @@ from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import ModelCheckpoint
 from torch.utils.data import DataLoader
 import torch
-from modules.mono.depth_net_pl_adaptive import depth_net_pl_adaptive
-from modules.semantic.semantic_net_pl_maskformer_small_room_type import semantic_net_pl_maskformer_small_room_type
+from modules.depth.depth_net_pl_adaptive import depth_net_pl_adaptive
+from modules.semantic.semantic_net_pl import semantic_net_pl
 from attrdict import AttrDict
 from data_utils.data_utils_for_laser_train import GridSeqDataset
 # from data_utils.data_utils import GridSeqDataset
@@ -61,7 +61,7 @@ def initialize_model(config, model_type):
             F_W=config.depth_net.F_W,
         )
     elif model_type == "semantic":
-        model = semantic_net_pl_maskformer_small_room_type(
+        model = semantic_net_pl(
                     num_ray_classes=config.num_classes,
                     num_room_types=config.num_room_types,
                     lr=config.lr,    

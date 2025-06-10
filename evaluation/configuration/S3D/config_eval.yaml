@@ -18,7 +18,7 @@ num_classes: 4
 # Evaluation parameters
 use_ground_truth_depth: false  # Set to true to use ground truth depth
 use_ground_truth_semantic: false  # Set to true to use ground truth semantics
-num_of_scenes: -1
+num_of_scenes: 1
 
 # Weight combinations for combined evaluation
 weight_combinations:
@@ -44,3 +44,4 @@ use_room_aware: true
 room_selection_threshold: 0.8
 num_room_types: 16
 
+is_zind: False

@@ -62,7 +62,6 @@ class LocalizationDataset(Dataset):
         self.gt_pose: List[List[np.ndarray]] = []
         self.gt_room_label: List[List[str]] = []
         self.room_polygons: List[Dict[str, List]] = []
-
         self._load_scene_data()
         logger.info(f"Number of valid scenes: {len(self.scene_names)}")
         
@@ -83,7 +82,7 @@ class LocalizationDataset(Dataset):
             is_zind = 'floor' in scene
             scene_number = int(scene.split('_')[1]) if not is_zind else None
             scene_name = f"scene_{scene_number}" if not is_zind else scene
-
+            print("scene_name-", scene_name)
             # Load scene data
             try:
                 scene_data = self._load_single_scene(scene_name, is_zind)
@@ -122,7 +121,6 @@ class LocalizationDataset(Dataset):
             Dictionary containing scene data or None if loading fails
         """
         scene_folder = os.path.join(self.data_dir, scene_name)
-        
         # Define file paths
         file_paths = {
             'depth': os.path.join(scene_folder, "depth.txt"),
@@ -130,9 +128,9 @@ class LocalizationDataset(Dataset):
             'pitch': os.path.join(scene_folder, "pitch.txt"),
             'roll': os.path.join(scene_folder, "roll.txt"),
             'poses': os.path.join(scene_folder, "poses.txt"),
-            'room_label': os.path.join(scene_folder, scene_name, 
+            'room_label': os.path.join(scene_folder, 
                 "room_type_per_image_mapped.txt" if is_zind else "room_type_per_image.txt"),
-            'room_rectangles': os.path.join(scene_folder, scene_name,
+            'room_rectangles': os.path.join(scene_folder,
                 "room_types_rectangles_mapped.json" if is_zind else "room_types_rectangles.json")
         }
 

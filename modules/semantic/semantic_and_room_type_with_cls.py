@@ -19,7 +19,7 @@ import torch.optim as optim
 class CrossAttention(nn.Module):
     def __init__(self, embed_dim):
         """
-        embed_dim: feature dimension (e.g. 48)
+        A single-head cross attention module.
         """
         super().__init__()
         self.embed_dim = embed_dim
@@ -42,23 +42,24 @@ class CrossAttention(nn.Module):
         K = self.key_proj(keys)       # (N, spatial, d)
         V = self.value_proj(values)   # (N, spatial, d)
 
-        scores = torch.matmul(Q, K.transpose(-1, -2)) / (self.embed_dim ** 0.5)  # (N, num_queries, spatial)
+        scores = torch.matmul(Q, K.transpose(-1, -2)) / (self.embed_dim ** 0.5)
         if attn_mask is not None:
             scores = scores.masked_fill(attn_mask, float('-inf'))
-        attn = torch.softmax(scores, dim=-1)  # (N, num_queries, spatial)
-        out = self.dropout(torch.matmul(attn, V))  # (N, num_queries, d)
+        attn = torch.softmax(scores, dim=-1)
+        out = self.dropout(torch.matmul(attn, V))
         return out, attn
 
 ##############################################################################
-# 2) Feature Extractor using ResNet50 Backbone with Cross Attention
+# 2) Feature Extractor using ResNet50 Backbone with Separate Attention
 ##############################################################################
 class semantic_feature_res_ca(nn.Module):
     def __init__(self):
         """
-        This module extracts features using a ResNet50 backbone.
-        It applies a small CNN (ConvBnReLU) to reduce channel dimension,
-        projects the flattened features to 48 dims, adds a learned positional
-        encoding, and uses cross attention with 41 learnable query tokens.
+        This module extracts features from a ResNet50 backbone.
+        The flattened features (with added positional encoding) are attended over
+        by two sets of learnable queries:
+          - a single CLS token (for room prediction),
+          - and 40 ray tokens (for ray predictions).
         """
         super().__init__()
         # Load ResNet50 with dilation in layer4.
@@ -77,12 +78,11 @@ class semantic_feature_res_ca(nn.Module):
             nn.Linear(2, 48),
             nn.Tanh()
         )
-        # We use 41 learnable queries (40 for rays, 1 for room CLS).
-        self.num_tokens = 41
-        self.queries = nn.Parameter(torch.randn(self.num_tokens, 48))
-        # Single-head cross attention module.
+        # Separate learnable queries: one for the room (CLS) and 40 for rays.
+        self.cls_token = nn.Parameter(torch.randn(1, 48))
+        self.ray_queries = nn.Parameter(torch.randn(40, 48))
+        # Single-head cross attention module (shared for both branches).
         self.cross_attn = CrossAttention(embed_dim=48)
-
         # Register ImageNet normalization constants as buffers.
         self.register_buffer("mean", torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1))
         self.register_buffer("std", torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1))
@@ -92,14 +92,16 @@ class semantic_feature_res_ca(nn.Module):
         x: (N, 3, H, W)
         mask: (N, H, W) or None
         Returns:
-          tokens: (N, 41, 48) -- first 40 tokens for rays; last token for room
-          attn:   attention weights from cross attention (for debugging)
+          ray_tokens: (N, 40, 48)
+          room_token: (N, 1, 48)
+          ray_attn:   attention weights from ray cross attention
+          room_attn:  attention weights from room cross attention
         """
         N, C, H, W = x.shape
-        # Normalize input image using registered buffers.
+        # Normalize input image.
         x_norm = (x - self.mean) / self.std
 
-        # Backbone feature extraction.
+        # Extract backbone features.
         feat = self.resnet(x_norm)["feat"]  # (N, 2048, fH, fW)
         feat = self.conv(feat)              # (N, 128, fH, fW)
         fH, fW = feat.shape[2], feat.shape[3]
@@ -115,24 +117,30 @@ class semantic_feature_res_ca(nn.Module):
         grid_y, grid_x = torch.meshgrid(grid_y, grid_x, indexing="ij")
         pos_coords = torch.stack((grid_x, grid_y), dim=-1).view(-1, 2)  # (fH*fW, 2)
         pos_emb = self.pos_mlp(pos_coords)  # (fH*fW, 48)
-        pos_emb = pos_emb.unsqueeze(0).expand(N, -1, -1)  # (N, fH*fW, 48)
+        pos_emb = pos_emb.unsqueeze(0).expand(N, -1, -1)
         feat_flat = feat_flat + pos_emb
 
-        # Prepare learnable queries.
-        queries = self.queries.unsqueeze(0).expand(N, -1, -1)  # (N, 41, 48)
-
-        # If a mask is provided, downsample and create an attention mask.
-        attn_mask = None
+        # Create attention masks (if a mask is provided).
         if mask is not None:
             mask_down = fn.resize(mask, (fH, fW), interpolation=fn.InterpolationMode.NEAREST).bool()
             mask_down = ~mask_down  # True indicates positions to ignore.
             mask_down = mask_down.view(N, -1)
-            attn_mask = mask_down.unsqueeze(1).expand(-1, self.num_tokens, -1)
+            attn_mask_room = mask_down.unsqueeze(1).expand(-1, 1, -1)   # For CLS token.
+            attn_mask_ray = mask_down.unsqueeze(1).expand(-1, 40, -1)    # For ray tokens.
+        else:
+            attn_mask_room = None
+            attn_mask_ray = None
 
-        # Cross attention: queries attend over the flattened features.
-        tokens, attn = self.cross_attn(queries, feat_flat, feat_flat, attn_mask=attn_mask)
-        return tokens, attn
-    
+        # Room branch: use CLS token.
+        cls_token = self.cls_token.unsqueeze(0).expand(N, -1, -1)  # (N, 1, 48)
+        room_token, room_attn = self.cross_attn(cls_token, feat_flat, feat_flat, attn_mask=attn_mask_room)
+
+        # Ray branch: use ray queries.
+        ray_queries = self.ray_queries.unsqueeze(0).expand(N, -1, -1)  # (N, 40, 48)
+        ray_tokens, ray_attn = self.cross_attn(ray_queries, feat_flat, feat_flat, attn_mask=attn_mask_ray)
+
+        return ray_tokens, room_token, ray_attn, room_attn
+
 ##############################################################################
 # 3) Minimal Self-Attention Block (single-head) for each branch
 ##############################################################################
@@ -150,7 +158,7 @@ class _SingleHeadSelfAttention(nn.Module):
         Q = self.query_proj(x)
         K = self.key_proj(x)
         V = self.value_proj(x)
-        scores = torch.matmul(Q, K.transpose(-1, -2)) / (D ** 0.5)  # (N, L, L)
+        scores = torch.matmul(Q, K.transpose(-1, -2)) / (D ** 0.5)
         attn = torch.softmax(scores, dim=-1)
         out = torch.matmul(attn, V)
         return out
@@ -173,11 +181,11 @@ class _SingleHeadSelfAttentionBlock(nn.Module):
         self.ln2 = nn.LayerNorm(embed_dim)
 
     def forward(self, x):
-        # Self-attention with residual connection
+        # Self-attention with residual connection.
         x_attn = self.attn_layer(x)
         x = x + x_attn
         x = self.ln1(x)
-        # Feed-forward network with residual connection
+        # Feed-forward network with residual connection.
         x_ffn = self.ffn(x)
         x = x + x_ffn
         x = self.ln2(x)
@@ -192,9 +200,7 @@ class RayBranch(nn.Module):
         Processes the 40 ray tokens.
         """
         super().__init__()
-        # Apply a self-attention block to the ray tokens.
         self.self_attn = _SingleHeadSelfAttentionBlock(embed_dim=embed_dim, ffn_multiplier=4)
-        # A deeper MLP for ray classification.
         self.mlp = nn.Sequential(
             nn.Linear(embed_dim, 128),
             nn.ReLU(inplace=True),
@@ -206,20 +212,18 @@ class RayBranch(nn.Module):
         )
 
     def forward(self, x):
-        # x: (N,40,embed_dim)
+        # x: (N, 40, embed_dim)
         x = self.self_attn(x)
-        out = self.mlp(x)  # (N,40,num_ray_classes)
+        out = self.mlp(x)  # (N, 40, num_ray_classes)
         return out
 
 class RoomBranch(nn.Module):
     def __init__(self, num_room_types, embed_dim=48):
         """
-        Processes the single room token.
+        Processes the single CLS token for room prediction.
         """
         super().__init__()
-        # Even though it's a single token, we add a self-attention block.
         self.self_attn = _SingleHeadSelfAttentionBlock(embed_dim=embed_dim, ffn_multiplier=4)
-        # A deeper MLP for room classification.
         self.mlp = nn.Sequential(
             nn.Linear(embed_dim, 128),
             nn.ReLU(inplace=True),
@@ -231,49 +235,42 @@ class RoomBranch(nn.Module):
         )
 
     def forward(self, x):
-        # x: (N,embed_dim) -> unsqueeze to (N,1,embed_dim)
-        x = x.unsqueeze(1)
+        # x: (N, 1, embed_dim) -> apply self-attention and then squeeze.
         x = self.self_attn(x)
         x = x.squeeze(1)
-        out = self.mlp(x)  # (N,num_room_types)
+        out = self.mlp(x)  # (N, num_room_types)
         return out
 
 ##############################################################################
 # 5) Final Multi-task Network
 ##############################################################################
-class semantic_net_resnet(nn.Module):
+class semantic_net(nn.Module):
     def __init__(self, num_ray_classes, num_room_types):
         """
         num_ray_classes: number of classes for each of the 40 rays.
         num_room_types: number of room classes (single prediction).
         """
         super().__init__()
-        # Feature extractor: returns tokens (N,41,48)
+        # Feature extractor: returns separate tokens for rays and room.
         self.semantic_feature = semantic_feature_res_ca()
-
-        # Two separate branches after token split.
+        # Two separate branches after token extraction.
         self.ray_branch = RayBranch(num_ray_classes, embed_dim=48)
         self.room_branch = RoomBranch(num_room_types, embed_dim=48)
 
-        # self.print_trainable_parameters()
-
     def forward(self, x, mask=None):
         """
-        x: (N,3,H,W)
-        mask: (N,H,W) or None
+        x: (N, 3, H, W)
+        mask: (N, H, W) or None
         Returns:
-          ray_logits:  (N,40,num_ray_classes)
-          room_logits: (N,num_room_types)
-          attn:        attention weights from cross attention (for debugging)
+          ray_logits:  (N, 40, num_ray_classes)
+          room_logits: (N, num_room_types)
+          ray_attn:    attention weights from ray cross attention (for debugging)
+          room_attn:   attention weights from room cross attention (for debugging)
         """
-        # Extract tokens (N,41,48)
-        tokens, attn = self.semantic_feature(x, mask=mask)
-        # Split: first 40 tokens for rays; last token for room.
-        ray_tokens = tokens[:, :40, :]   # (N,40,48)
-        room_token = tokens[:, 40, :]      # (N,48)
+        ray_tokens, room_token, ray_attn, room_attn = self.semantic_feature(x, mask=mask)
         ray_logits = self.ray_branch(ray_tokens)
         room_logits = self.room_branch(room_token)
-        return ray_logits, room_logits, attn
+        return ray_logits, room_logits, ray_attn
 
     def print_trainable_parameters(self):
         """

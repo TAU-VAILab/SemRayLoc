@@ -79,8 +79,8 @@ def process_scene(scene, base_dir, df_dir):
         scene_dir = os.path.join(df_dir, scene_path)
         os.makedirs(scene_dir, exist_ok=True)
         
-        np.save(os.path.join(scene_dir, "depth_df.npy"), depth_df)
-        np.save(os.path.join(scene_dir, "semantic_df.npy"), semantic_df)
+        np.save(os.path.join(scene_dir, "depth_df.npy"), depth_df["depth"])
+        np.save(os.path.join(scene_dir, "semantic_df.npy"), semantic_df["semantic"])
         
     except Exception as e:
         print(f"Failed processing scene {scene}: {str(e)}")
@@ -105,14 +105,14 @@ def process_test_scenes(yaml_path, base_dir, df_dir):
 def main():
     """Main function to process scenes."""
     # Dataset paths relative to project root
-    #S3D
-    # yaml_path = FILE_DIR / "Data/S3D/processed/split.yaml"
-    # base_dir = FILE_DIR / "Data/S3D/processed"
-    # df_dir = FILE_DIR / "Data/S3D/df"
+    # S3D
+    yaml_path = FILE_DIR / "Data/S3D/processed/split.yaml"
+    base_dir = FILE_DIR / "Data/S3D/processed"
+    df_dir = FILE_DIR / "Data/S3D/df"
     #ZInD
-    yaml_path = FILE_DIR / "Data/zind/processed/split.yaml"
-    base_dir = FILE_DIR / "Data/zind/processed"
-    df_dir = FILE_DIR / "Data/zind/df"
+    # yaml_path = FILE_DIR / "Data/zind/processed/split.yaml"
+    # base_dir = FILE_DIR / "Data/zind/processed"
+    # df_dir = FILE_DIR / "Data/zind/df"
     
     # Ensure directories exist
     os.makedirs(df_dir, exist_ok=True)

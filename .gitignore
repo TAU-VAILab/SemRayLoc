@@ -10,4 +10,4 @@ __pycache__/
 temp/
 *.pyc
 .git_backup/
-
+venv/

@@ -8,13 +8,13 @@ from torch.utils.data import DataLoader
 import torch
 from attrdict import AttrDict
 
-from modules.mono.depth_net_pl import depth_net_pl
+from modules.depth.depth_net_pl import depth_net_pl
 # from modules.mono.depth_net_pl_adaptive import depth_net_pl_adaptive
 
 from modules.semantic.semantic_net_pl import semantic_net_pl
 from modules.semantic.semantic_net_pl_maskformer import semantic_net_pl_maskformer
 from modules.semantic.semantic_net_pl_maskformer_small import semantic_net_pl_maskformer_small
-from modules.semantic.semantic_net_pl_maskformer_small_room_type import semantic_net_pl_maskformer_small_room_type
+from modules.semantic.semantic_net_pl import semantic_net_pl
 from modules.semantic.room_type_net_pl import room_type_net_pl
 from modules.semantic.room_type_pred.room_type_pred_no_backbone_pl import room_type_pred_no_backbone_pl
 from modules.semantic.room_type_pred.room_type_pred_resnet50_pl import room_type_pred_resnet50_pl
@@ -63,7 +63,7 @@ def initialize_model(config, model_type):
         )
     elif model_type == "semantic":
         if config.use_room_type:
-            model = semantic_net_pl_maskformer_small_room_type(
+            model = semantic_net_pl(
                         num_ray_classes=config.num_classes,
                         num_room_types=config.num_room_types,
                         lr=config.lr,    

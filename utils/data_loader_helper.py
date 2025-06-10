@@ -14,6 +14,7 @@ def load_scene_data(test_set, dataset_dir, df_path,use_walls=True):
     valid_scene_names = []  # To keep track of valid scenes
 
     for scene in tqdm.tqdm(test_set.scene_names):
+        print("scene:", scene)
         try:
             if 'floor' in scene: # zind
                 pass
@@ -21,17 +22,18 @@ def load_scene_data(test_set, dataset_dir, df_path,use_walls=True):
                 scene_number = int(scene.split('_')[1])
                 scene = f"scene_{scene_number}"
             
-            depth_df = np.load(os.path.join(df_path, scene, "depth_df.npy"), allow_pickle=True) 
-            semantic_df = np.load(os.path.join(df_path, scene, "semantic_df.npy"), allow_pickle=True)
+            print(f"Loading depth_df of: {scene}")
+            depth_df_npy = np.load(os.path.join(df_path, scene, "depth_df.npy"), allow_pickle=True) 
+
+
+            semantic_df_npy = np.load(os.path.join(df_path, scene, "semantic_df.npy"), allow_pickle=True)
             occ_sem = cv2.imread(os.path.join(dataset_dir, scene, "floorplan_semantic.png"))
-            occ_sem_rgb = cv2.cvtColor(occ_sem, cv2.COLOR_BGR2RGB)
-            if use_walls:
-                occ_walls = cv2.imread(os.path.join(dataset_dir, scene, "floorplan_walls_only.png"))
-            else:
-                occ_walls = None
-            
-            depth_df[scene] = depth_df.item()
-            semantic_df[scene] = semantic_df.item()
+            occ_sem_rgb = cv2.cvtColor(occ_sem, cv2.COLOR_BGR2RGB)      
+            occ_walls = None      
+
+            depth_df[scene] = depth_df_npy
+            semantic_df[scene] = semantic_df_npy
+
             maps[scene] = occ_sem_rgb
             walls[scene] = occ_walls
 
@@ -47,9 +49,9 @@ def load_scene_data(test_set, dataset_dir, df_path,use_walls=True):
                 gt_poses[scene] = poses
             
             valid_scene_names.append(scene)
-        except:
-            print(f"Error in loading desdf of: {scene}")
+        except Exception as e:
+            print(f"Error in loading  df of: {scene}")
+            print(e)
             continue
 
-    # print(f"number of valid scenes for evaluation: {len(valid_scene_names)} out of: {len(test_set.scene_names)} --> {(len(valid_scene_names)/len(test_set.scene_names))*100}%")
     return depth_df, semantic_df, maps, gt_poses, valid_scene_names, walls

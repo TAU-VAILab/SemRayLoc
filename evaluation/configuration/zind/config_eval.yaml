@@ -59,3 +59,5 @@ top_k: 5
 #For random yaw:
 pano_dir: "/home/yuvalg/projects/Semantic_Floor_plan_localization/data/zind_data"
 dataset_pano:  "/home/yuvalg/projects/Semantic_Floor_plan_localization/data/zind_data"
+
+is_zind: True
