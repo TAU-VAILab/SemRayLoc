@@ -23,6 +23,10 @@
       max-width: 900px;
       margin: 0 auto;
     }
+    .emoji {
+      font-size: 1.4em;
+      vertical-align: middle;
+    }
     .demo-container {
       background: #f8f9fa;
       padding: 2rem;
@@ -122,21 +126,23 @@
       gap: 0.5rem;
     }
     .legend-arrow {
-      width: 30px;
-      height: 4px;
+      width: 16px;
+      height: 8px;
       position: relative;
-      border: 1px solid black;
+      border: none;
+      background: transparent;
+      box-shadow: 0 0 3px black;
     }
     .legend-arrow::after {
       content: '';
       position: absolute;
-      right: 0;
+      right: -14px;
       top: 50%;
       transform: translateY(-50%);
-      border-left: 8px solid currentColor;
-      border-top: 6px solid transparent;
-      border-bottom: 6px solid transparent;
-      filter: drop-shadow(0 0 1px black);
+      border-left: 14px solid currentColor;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      filter: drop-shadow(0 0 2px black);
     }
     .legend-arrow.magenta {
       background: #ff00ff;
@@ -151,6 +157,9 @@
     }
     .legend-arrow.white::after {
       border-left-color: white;
+    }
+    .legend-item span {
+      margin-left: 10px;
     }
     .scroll-bar, .scroll-thumb { display: none !important; }
   </style>
@@ -193,9 +202,28 @@
     </div>
   </div>
 
-  <!-- Teaser Section: Single Image -->
-  <div class="teaser-section mb-4 text-center">
-    <img src="assets/images/teaser/Teaser.png" alt="Teaser" style="max-width:100%;height:auto;">
+  <!-- Teaser Section: Single Image with Interactive Regions -->
+  <div class="teaser-section mb-4 text-center" style="position:relative; display:inline-block;">
+    <img id="teaserImg" src="assets/images/teaser/Teaser.png" alt="Teaser" style="max-width:100%;height:auto;">
+    <!-- Overlay for middle up (depth) -->
+    <div id="teaserDepthRegion" style="
+      position:absolute;
+      left:33.33%; top:0;
+      width:33.33%; height:50%;
+      cursor:pointer;
+      z-index:2;
+    "></div>
+    <!-- Overlay for middle bottom (semantic) -->
+    <div id="teaserSemanticRegion" style="
+      position:absolute;
+      left:33.33%; top:50%;
+      width:33.33%; height:50%;
+      cursor:pointer;
+      z-index:2;
+    "></div>
+  </div>
+  <div class="text-center mb-4" style="font-size:1.15rem; color:#888;">
+    Hover over each floorplan to see predicted rays
   </div>
 
   <!-- TL;DR section -->
@@ -205,9 +233,28 @@
     </p>
   </div>
 
+  <!-- abstract -->
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <p class="h4 font-weight-bold title">Abstract</p>
+      <p class="abstract">
+        Floorplans provide a compact representation of the building's structure, revealing not only layout information but also detailed semantics such as the locations of windows and doors. However, contemporary floorplan localization techniques mostly focus on matching depth-based structural cues, ignoring the rich semantics communicated within floorplans. In this work, we introduce a semantic-aware localization framework that jointly estimates depth and semantic rays, consolidating over both for predicting a structural-semantic probability volume. Our probability volume is constructed in a coarse-to-fine manner: We first sample a small set of rays to obtain an initial low-resolution probability volume. We then refine these probabilities by performing a denser sampling only in high-probability regions and process the refined values for predicting a 2D location and orientation angle. We conduct an evaluation on two standard floorplan localization benchmarks. Our experiments demonstrate that our approach substantially outperforms state-of-the-art methods, achieving significant improvements in recall metrics compared to prior works. Moreover, we demonstrate that our framework can easily incorporate additional metadata such as room labels, enabling additional gains in both accuracy and efficiency.
+      </p>
+    </div>
+  </div>
+
   <!-- Improved Interactive Demo Section -->
   <div class="container my-5" id="interactive-demo">
     <h3 class="mb-3">Interactive Demo</h3>
+    <p class="lead mb-4">
+      Explore our localization results across different floorplans and images. Select a floorplan and an image to see how our method localizes the camera position and orientation. The demo shows the progression of our method's performance as we add more components:
+    </p>
+    <ul class="mb-4" style="font-size:1.1rem; line-height:1.6;">
+      <li><b><span class="emoji">📐</span> Depth Only (F3Loc):</b> Baseline localization using only depth information</li>
+      <li><b><span class="emoji">🚪</span> + Semantic:</b> Enhanced localization by incorporating our semantic network's predictions</li>
+      <li><b><span class="emoji">📺</span> + Room Aware:</b> Further improvement by considering room type information to narrow down the search space</li>
+      <li><b><span class="emoji">✨</span> + Refine:</b> Final refinement step using our coarse-to-fine strategy for precise localization</li>
+    </ul>
     <!-- Floorplan selection row -->
     <div class="demo-container">
       <div class="demo-row" id="floorplanRow">
@@ -219,10 +266,10 @@
       </div>
       <!-- Mode selection row -->
       <div class="mode-buttons">
-        <button class="mode-button" data-mode="depth">Depth Only</button>
-        <button class="mode-button" data-mode="semantics">+ Semantic</button>
-        <button class="mode-button" data-mode="room-aware">+ Room Aware</button>
-        <button class="mode-button" data-mode="refine">+ Refine</button>
+        <button class="mode-button" data-mode="depth"><span class="emoji">📐</span> Depth Only (F3Loc)</button>
+        <button class="mode-button" data-mode="semantics"><span class="emoji">🚪</span> + Semantic</button>
+        <button class="mode-button" data-mode="room-aware"><span class="emoji">📺</span> + Room Aware</button>
+        <button class="mode-button" data-mode="refine"><span class="emoji">✨</span> + Refine</button>
       </div>
       <!-- Probability map display -->
       <div class="demo-display">
@@ -484,6 +531,27 @@
   }
   </script>
 
+  <script>
+  // Interactive teaser hover logic
+  const teaserImg = document.getElementById('teaserImg');
+  const teaserDepthRegion = document.getElementById('teaserDepthRegion');
+  const teaserSemanticRegion = document.getElementById('teaserSemanticRegion');
+  if (teaserDepthRegion && teaserSemanticRegion && teaserImg) {
+    teaserDepthRegion.addEventListener('mouseenter', () => {
+      teaserImg.src = 'assets/images/teaser/Teaser_depth.png';
+    });
+    teaserSemanticRegion.addEventListener('mouseenter', () => {
+      teaserImg.src = 'assets/images/teaser/Semantic_Teaser.png';
+    });
+    teaserDepthRegion.addEventListener('mouseleave', () => {
+      teaserImg.src = 'assets/images/teaser/Teaser.png';
+    });
+    teaserSemanticRegion.addEventListener('mouseleave', () => {
+      teaserImg.src = 'assets/images/teaser/Teaser.png';
+    });
+  }
+  </script>
+
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
     crossorigin="anonymous"></script>
@@ -491,53 +559,30 @@
     integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
     crossorigin="anonymous"></script>
 
-  <!-- abstract -->
-  <div class="row">
-    <div class="col-md-12 col-sm-12 col-xs-12">
-      <p class="h4 font-weight-bold title">Abstract</p>
-      <p class="abstract">
-        Floorplans provide a compact representation of the building's structure, revealing not only layout information but also detailed semantics such as the locations of windows and doors. However, contemporary floorplan localization techniques mostly focus on matching depth-based structural cues, ignoring the rich semantics communicated within floorplans. In this work, we introduce a semantic-aware localization framework that jointly estimates depth and semantic rays, consolidating over both for predicting a structural-semantic probability volume. Our probability volume is constructed in a coarse-to-fine manner: We first sample a small set of rays to obtain an initial low-resolution probability volume. We then refine these probabilities by performing a denser sampling only in high-probability regions and process the refined values for predicting a 2D location and orientation angle. We conduct an evaluation on two standard floorplan localization benchmarks. Our experiments demonstrate that our approach substantially outperforms state-of-the-art methods, achieving significant improvements in recall metrics compared to prior works. Moreover, we demonstrate that our framework can easily incorporate additional metadata such as room labels, enabling additional gains in both accuracy and efficiency.
-      </p>
-    </div>
-  </div>
-
   <!-- methods -->
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <p class="h4 font-weight-bold title">Method</p>
-      <p class="abstract">
-        Our framework introduces a semantic-aware localization approach that combines depth and semantic information for accurate camera pose estimation. The method consists of three main components:
-      </p>
-      <div class="row mt-4">
-        <div class="col-md-4">
-          <h5>Semantic Rays Prediction</h5>
-          <p>We predict semantic rays that capture important structural elements like windows and doors, represented as discrete classes. This is achieved through a network architecture that leverages a pretrained ResNet50 backbone and attention mechanisms.</p>
-        </div>
-        <div class="col-md-4">
-          <h5>Probability Volume Construction</h5>
-          <p>We construct a structural-semantic probability volume by fusing depth and semantic cues. The volume is built in a coarse-to-fine manner, first sampling a small set of rays, then refining in high-probability regions.</p>
-        </div>
-        <div class="col-md-4">
-          <h5>Location Extraction</h5>
-          <p>We employ a coarse-to-fine strategy for precise localization. The process involves extracting top-k candidates, generating augmented orientations, and comparing high-resolution ground-truth rays with predictions.</p>
-        </div>
-      </div>
       <div class="row mt-4">
         <div class="col-12 text-center">
           <img src="assets/images/methods/pipe.jpg" alt="Method Pipeline" style="max-width:100%;height:auto;">
-          <div class="mt-2" style="font-size:1.15rem; color:#555;">Figure: Overview of our semantic-aware floorplan localization pipeline. The framework combines depth and semantic ray predictions to construct a structural-semantic probability volume for accurate 2D localization and orientation estimation.</div>
+          <div class="mt-2" style="font-size:1.15rem; color:#555;">Figure: Overview of our semantic-aware floorplan localization pipeline.</div>
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-12 text-center">
-          <img src="assets/images/methods/net.jpg" alt="Semantic Network" style="max-width:100%;height:auto;">
-          <div class="mt-2" style="font-size:1.15rem; color:#555;">Figure: Architecture of the semantic ray prediction network. The network uses a ResNet backbone and attention-based token extraction to predict semantic rays and (optionally) room type probabilities.</div>
-        </div>
-      </div>
-      <div class="row mt-3">
         <div class="col-12">
-          <p style="font-size:1.05rem;"><b>Room-aware branch:</b> Our semantic network can optionally predict the room type from which the input image was taken. If the predicted room probability is high, a mask is applied to the probability volume, retaining only the regions corresponding to the predicted room. This narrows down the search space and improves localization accuracy, especially in environments with multiple similar rooms.</p>
-          <p style="font-size:1.05rem;"><b>Coarse-to-fine localization:</b> To balance accuracy and efficiency, our method first computes a low-resolution probability volume to identify high-probability regions. It then refines the localization by performing a denser search only in these regions, using high-resolution ray comparisons. This two-stage process enables precise localization while keeping computation tractable.</p>
+          <ul style="font-size:1.1rem; line-height:1.6;">
+            <li><b><span class="emoji">🚪</span> Semantic Ray Prediction:</b> Predict semantic rays using a ResNet50 backbone with attention mechanisms</li>
+            <li><b><span class="emoji">📊</span> Probability Volume Construction:</b> Fuse depth and semantic cues to build a structural-semantic probability volume</li>
+            <li><b><span class="emoji">🎯</span> Coarse-to-Fine Localization:</b>
+              <ul>
+                <li>Initial low-resolution sampling for candidate regions</li>
+                <li>Dense sampling in high-probability regions</li>
+                <li>High-resolution ray comparison for precise localization</li>
+              </ul>
+            </li>
+            <li><b><span class="emoji">📺</span> Room Aware:</b> Predict room type to narrow search space and improve accuracy</li>
+          </ul>
         </div>
       </div>
     </div>

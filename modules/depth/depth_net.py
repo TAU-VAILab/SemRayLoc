@@ -75,7 +75,7 @@ class depth_feature_res(nn.Module):
         )
 
         # Adaptive pooling to ensure fixed fW of 40
-        self.adaptive_pool = nn.AdaptiveAvgPool2d((None, FIXED_WIDTH)) 
+        # self.adaptive_pool = nn.AdaptiveAvgPool2d((None, FIXED_WIDTH)) #TODO where from 
 
         self.pos_mlp_2d = nn.Sequential(
             nn.Linear(2, 32), nn.Tanh(), nn.Linear(32, 32), nn.Tanh()
@@ -99,7 +99,7 @@ class depth_feature_res(nn.Module):
         x = self.conv(x)  # (N, 128, fH, fW)
         
         # Apply adaptive pooling to make fW = 40
-        x = self.adaptive_pool(x)  # (N, 128, fH, 40) 
+        # x = self.adaptive_pool(x)  # (N, 128, fH, 40)  #TODO where from 
         
         fH, fW = list(x.shape[2:])
         N = x.shape[0]
