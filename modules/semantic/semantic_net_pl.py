@@ -13,7 +13,6 @@ class semantic_net_pl(pl.LightningModule):
         num_ray_classes = 4,           # e.g., the # of semantic categories for each ray
         num_room_types=16,         # len(VALID_ROOM_TYPES)
         lr=1e-3,
-        semantic_net_type = "resnet_cls",
     ) -> None:
         super().__init__()
         self.lr = lr

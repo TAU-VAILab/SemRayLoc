@@ -14,6 +14,7 @@ from modules.semantic.semantic_net_pl import semantic_net_pl
 
 # from data_utils.data_utils_for_laser_train import GridSeqDataset
 from data_utils.data_utils import LocalizationDataset
+from data_utils.data_utils_zind import LocalizationDataset as LocalizationDatasetZind
 import numpy as np
 
 # Helper utilities
@@ -155,7 +156,12 @@ def evaluate_localization_pipeline(config):
     split_file = os.path.join(config.dataset_dir, "processed", "split.yaml")
     with open(split_file, "r") as f:
         split = AttrDict(yaml.safe_load(f))
-    test_set = LocalizationDataset(os.path.join(config.dataset_dir, "processed"), split.test[:config.num_of_scenes])
+    is_zind = config.get("is_zind", False)
+
+    if is_zind:
+        test_set = LocalizationDatasetZind(os.path.join(config.dataset_dir), split.test[:config.num_of_scenes])
+    else:
+        test_set = LocalizationDataset(os.path.join(config.dataset_dir, "processed"), split.test[:config.num_of_scenes])
     
     depth_net = None if config.use_ground_truth_depth else depth_net_pl.load_from_checkpoint(config.depth_weights).to(device).eval()
     semantic_net = None if config.use_ground_truth_semantic else semantic_net_pl.load_from_checkpoint(config.semantic_weights, num_classes=config.num_classes, num_room_types=config.num_room_types).to(device).eval()
@@ -188,7 +194,7 @@ def evaluate_localization_pipeline(config):
             
             combined_prob_vol = combine_prob_volumes(prob_vol_depth, prob_vol_semantic, depth_weight, semantic_weight)
 
-            room_polygons = predict_room_and_get_polygons(room_logits, data["room_polygons"], config.room_selection_threshold, config.is_zind) if config.use_room_aware and room_logits is not None else []
+            room_polygons = predict_room_and_get_polygons(room_logits, data["room_polygons"], config.room_selection_threshold, is_zind) if config.use_room_aware and room_logits is not None else []
             
             # --- Room-Aware Localization ---
             _, prob_dist, orient_map, pose = finalize_localization(combined_prob_vol, data["room_polygons"], room_polygons)
@@ -221,7 +227,8 @@ def evaluate_localization_pipeline(config):
 
 def main():
     parser = argparse.ArgumentParser(description="Run the localization evaluation pipeline.")    
-    parser.add_argument("--config_file", type=str, default="evaluation/configuration/S3D/config_eval.yaml", help="Path to the configuration file.")
+    # parser.add_argument("--config_file", type=str, default="evaluation/configuration/S3D/config_eval.yaml", help="Path to the configuration file.")
+    parser.add_argument("--config_file", type=str, default="evaluation/configuration/zind/config_eval.yaml", help="Path to the configuration file.")
     args = parser.parse_args()
     with open(args.config_file, "r") as f:
         config = AttrDict(yaml.safe_load(f))

@@ -6,7 +6,7 @@ depth_weights: 'modules\weights\s3d\final_depth.ckpt'
 semantic_weights: 'modules\weights\s3d\final_semantic.ckpt'
 
 #------------------------------------------
-results_dir: 'results\s3d_perspective\test_set\open_doors_experiment'
+results_dir: 'results\s3d_perspective\test_set\'
 
 #Localize:
 F_W: 0.59587643422

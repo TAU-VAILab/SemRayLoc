@@ -1,0 +1,9 @@
+# config.yaml
+dataset_dir: 'Data\S3D'
+ckpt_path: ./logs/S3D/depth_net/
+model_type: "depth"
+
+epochs: 100
+batch_size: 16
+lr: 0.001
+shape_loss_weight: 20

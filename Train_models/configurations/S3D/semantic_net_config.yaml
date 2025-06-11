@@ -1,6 +1,6 @@
 # config.yaml
-dataset_dir: 'Data\zind'
-ckpt_path: ./logs/zind/semantic_net/
+dataset_dir: 'Data\S3D'
+ckpt_path: ./logs/S3D/semantic_net/
 
 epochs: 100
 batch_size: 16
@@ -8,5 +8,3 @@ lr: 0.001
 num_classes: 4
 model_type: "semantic"
 num_room_types: 16
-
-is_zind: True

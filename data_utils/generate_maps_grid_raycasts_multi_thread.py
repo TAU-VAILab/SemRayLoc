@@ -106,13 +106,13 @@ def main():
     """Main function to process scenes."""
     # Dataset paths relative to project root
     # S3D
-    yaml_path = FILE_DIR / "Data/S3D/processed/split.yaml"
-    base_dir = FILE_DIR / "Data/S3D/processed"
-    df_dir = FILE_DIR / "Data/S3D/df"
+    # yaml_path = FILE_DIR / "Data/S3D/processed/split.yaml"
+    # base_dir = FILE_DIR / "Data/S3D/processed"
+    # df_dir = FILE_DIR / "Data/S3D/df"
     #ZInD
-    # yaml_path = FILE_DIR / "Data/zind/processed/split.yaml"
-    # base_dir = FILE_DIR / "Data/zind/processed"
-    # df_dir = FILE_DIR / "Data/zind/df"
+    yaml_path = FILE_DIR / "Data/zind/processed/split.yaml"
+    base_dir = FILE_DIR / "Data/zind/processed"
+    df_dir = FILE_DIR / "Data/zind/df"
     
     # Ensure directories exist
     os.makedirs(df_dir, exist_ok=True)
