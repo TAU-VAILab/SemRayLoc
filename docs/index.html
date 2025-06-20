@@ -171,24 +171,20 @@
   <div class='row mt-5 mb-3'>
     <div class='col text-center'>
       <h1 class="display-4 font-weight-bold title-text">Supercharging Floorplan Localization with Semantic Rays</h1>
-      <p class="lead mt-3">A Novel Approach to Indoor Localization Using Semantic Understanding</p>
     </div>
   </div>
 
   <!-- authors -->
   <div class="col text-center h5 font-weight-bold mb-2">
-    <span><a class="col-md-4 col-xs-6 pb-2" href="#">Yuval Grader</a></span>
-    <span><a class="col-md-4 col-xs-6 pb-2" href="https://www.elor.sites.tau.ac.il/">Hadar Averbuch-Elor</a></span>
-  </div>
-
-  <!-- affiliations -->
-  <div class='row mb-3'>
-    <div class='col text-center'>
-      <p class="h6">
-        <a href="https://english.tau.ac.il/"><span>Tel Aviv University</span></a>
-        <span class="mx-2">|</span>
-        <a href="https://www.cornell.edu/"><span>Cornell University</span></a>
-      </p>
+    <div class="row justify-content-center">
+      <div class="col-md-4 col-xs-6 pb-2">
+        <a href="#">Yuval Grader</a>
+        <div class="h6 font-weight-normal">Tel Aviv University</div>
+      </div>
+      <div class="col-md-4 col-xs-6 pb-2">
+        <a href="https://www.elor.sites.tau.ac.il/">Hadar Averbuch-Elor</a>
+        <div class="h6 font-weight-normal">Cornell University</div>
+      </div>
     </div>
   </div>
 
@@ -222,21 +218,13 @@
       z-index:2;
     "></div>
   </div>
-  <div class="text-center mb-4" style="font-size:1.15rem; color:#888;">
-    Hover over each floorplan to see predicted rays
-  </div>
-
-  <!-- TL;DR section -->
-  <div class='col-md-12 col-sm-12 col-xs-12 align-middle mt-1'>
-    <p class="text-break">
-      <b>TL;DR:</b> We introduce a novel floorplan localization framework that leverages both semantic and depth information. Our approach uses semantic rays to capture important structural elements like windows and doors, combined with depth cues for accurate camera pose estimation. The method employs a coarse-to-fine strategy, first sampling a small set of rays for initial localization, then refining in high-probability regions. Our experiments show significant improvements over state-of-the-art methods, with the added benefit of easily incorporating room labels for enhanced accuracy.
-    </p>
-  </div>
+  <div class="text-left mb-4" style="font-size:1.15rem; color:#888;">
+    Hover over the floorplan to view the predicted rays. In the top row, localization using a raw, walls-only floorplan often produces ambiguous results. In the bottom row, we show localization with a floorplan enriched by semantic information. In this work, we leverage this richer—yet readily available—representation: a floorplan annotated with semantic labels (bottom row). Our approach supercharges localization with semantic rays, effectively resolving ambiguities, as illustrated by the comparison on the right.  </div>
 
   <!-- abstract -->
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
-      <p class="h4 font-weight-bold title">Abstract</p>
+      <p class="h3 font-weight-bold title">Abstract</p>
       <p class="abstract">
         Floorplans provide a compact representation of the building's structure, revealing not only layout information but also detailed semantics such as the locations of windows and doors. However, contemporary floorplan localization techniques mostly focus on matching depth-based structural cues, ignoring the rich semantics communicated within floorplans. In this work, we introduce a semantic-aware localization framework that jointly estimates depth and semantic rays, consolidating over both for predicting a structural-semantic probability volume. Our probability volume is constructed in a coarse-to-fine manner: We first sample a small set of rays to obtain an initial low-resolution probability volume. We then refine these probabilities by performing a denser sampling only in high-probability regions and process the refined values for predicting a 2D location and orientation angle. We conduct an evaluation on two standard floorplan localization benchmarks. Our experiments demonstrate that our approach substantially outperforms state-of-the-art methods, achieving significant improvements in recall metrics compared to prior works. Moreover, we demonstrate that our framework can easily incorporate additional metadata such as room labels, enabling additional gains in both accuracy and efficiency.
       </p>
@@ -245,7 +233,7 @@
 
   <!-- Improved Interactive Demo Section -->
   <div class="container my-5" id="interactive-demo">
-    <h3 class="mb-3">Interactive Demo</h3>
+    <h3 class="h3 font-weight-bold title mb-3">Interactive Demo</h3>
     <p class="lead mb-4">
       Explore our localization results across different floorplans and images. Select a floorplan and an image to see how our method localizes the camera position and orientation. The demo shows the progression of our method's performance as we add more components:
     </p>
@@ -562,7 +550,7 @@
   <!-- methods -->
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
-      <p class="h4 font-weight-bold title">Method</p>
+      <p class="h3 font-weight-bold title">How does it work?</p>
       <div class="row mt-4">
         <div class="col-12 text-center">
           <img src="assets/images/methods/pipe.jpg" alt="Method Pipeline" style="max-width:100%;height:auto;">
@@ -591,7 +579,7 @@
   <!-- citation -->
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
-      <p class="h4 font-weight-bold title">Citation</p>
+      <p class="h3 font-weight-bold title">Citation</p>
       <pre><code>@InProceedings{your-paper-citation,
   author    = {Your Name and Co-Author Name},
   title     = {Semantic Floor Plan Localization},
