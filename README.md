@@ -82,9 +82,7 @@ For each dataset (S3D, ZInD):
 
 ## Pretrained Weights
 - Download pretrained weights and place them in the appropriate directory (e.g., `modules/weights/s3d/`).
-- [Download weights here](<PLACEHOLDER_FOR_LINK>)
-
----
+- [Download weights here](<https://drive.google.com/drive/folders/1BkQiuEPQ4GQyKyy8vfPAu5-WnJWesQUN?usp=sharing>)
 
 ## Requirements
 See `requirements.txt` for all dependencies.
