@@ -1,9 +1,14 @@
-# Semantic Floor Plan Localization
+# Supercharging Floorplan Localization with Semantic Rays
 
 [![GitHub](https://img.shields.io/badge/GitHub-Project-blue?logo=github)](https://github.com/your-repo)
-[Paper (arXiv)](https://arxiv.org/abs/your-arxiv-id)
+[![Paper](https://img.shields.io/badge/Paper-ICCV%202025-red)](https://arxiv.org/abs/your-arxiv-id)
+[![Conference](https://img.shields.io/badge/Conference-ICCV%202025-blue)](https://iccv2025.thecvf.com/)
 
-This is the official code repository for our work on semantic-aware floorplan localization. The framework leverages both semantic and depth information for accurate camera pose estimation in indoor environments.
+<p align="center">
+  <img src="docs/assets/images/teaser/Teaser.png" width="800" alt="Teaser Image">
+</p>
+
+This is the official code repository for our ICCV 2025 paper "Supercharging Floorplan Localization with Semantic Rays". The framework leverages both semantic and depth information for accurate camera pose estimation in indoor environments.
 
 ---
 
@@ -15,6 +20,7 @@ Floorplans provide a compact representation of the building's structure, reveali
 ## Links
 - [GitHub Project Page](https://github.com/your-repo)
 - [Paper (arXiv)](https://arxiv.org/abs/your-arxiv-id)
+- [ICCV 2025 Conference](https://iccv2025.thecvf.com/)
 - [Structured3D Dataset](https://structured3d-dataset.org/)
 - [ZInD Dataset](https://zind.cs.princeton.edu/)
 
@@ -44,7 +50,7 @@ For each dataset (S3D, ZInD):
    - This will create a `processed` folder with the required structure.
 
 3. **Resize Images**
-   - Resize all images to the required input size:
+   - Resize all images to the required input size (360x640) to match prior work:
      ```bash
      python data_utils/resize_images.py
      ```
@@ -57,16 +63,45 @@ For each dataset (S3D, ZInD):
 
 5. **Map Room Types**
    - Use the helper functions in `modules/semantic/semantic_mapper.py` to map room types as needed for your dataset.
+   - **Important for ZInD**: Since ZInD contains over 250 different room types, we use a semantic mapper to consolidate these into a more manageable set of semantic categories. This mapping is essential for effective training and evaluation.
 
 ---
 
 ## Training
+
+Our training framework is built on **PyTorch Lightning**, providing robust training capabilities with automatic logging and checkpointing.
+
+### Configuration
 - Each training run is controlled by a config file (YAML) in `Train_models/configurations/S3D/` or the corresponding dataset folder.
 - Adjust the main parameters (e.g., learning rate, batch size, loss weights, etc.) in the config file before training.
-- Start training:
-  ```bash
-  python -m Train_models.Train
-  ```
+
+### Training Process
+1. **Start Training**:
+   ```bash
+   python -m Train_models.Train
+   ```
+
+2. **Monitor Training**:
+   - **TensorBoard**: Training progress is automatically logged to TensorBoard. Launch TensorBoard to monitor:
+     ```bash
+     tensorboard --logdir lightning_logs
+     ```
+   - **Checkpoints**: PyTorch Lightning automatically saves checkpoints in the `lightning_logs/` directory
+   - **Logs**: Detailed training logs are saved in the `logs/` directory
+
+3. **Training Features**:
+   - **Automatic Mixed Precision**: Enabled by default for faster training
+   - **Gradient Clipping**: Configured to prevent gradient explosion
+   - **Early Stopping**: Monitors validation loss to prevent overfitting
+   - **Model Checkpointing**: Saves best model based on validation metrics
+
+### Training Tips
+- Monitor the training curves in TensorBoard to ensure proper convergence
+- Adjust learning rate and batch size based on your hardware capabilities
+- Use the validation set to tune hyperparameters
+- Check the `lightning_logs/` directory for saved model checkpoints
+
+---
 
 ## Evaluation
 - For evaluation, specify the evaluation config, weights directory, and results directory in the evaluation script/config.
@@ -87,4 +122,13 @@ See `requirements.txt` for all dependencies.
 ---
 
 ## Citation
-If you use this code, please cite our work (citation coming soon). 
+If you use this code, please cite our ICCV 2025 paper:
+
+```bibtex
+@inproceedings{grader2025supercharging,
+  title={Supercharging Floorplan Localization with Semantic Rays},
+  author={Grader, Yuval and Averbuch-Elor, Hadar},
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+  year={2025}
+}
+``` 
