@@ -2,27 +2,23 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-Project-blue?logo=github)](https://github.com/your-repo)
 [![Paper](https://img.shields.io/badge/Paper-ICCV%202025-red)](https://arxiv.org/abs/your-arxiv-id)
-[![Conference](https://img.shields.io/badge/Conference-ICCV%202025-blue)](https://iccv2025.thecvf.com/)
 
 <p align="center">
-  <img src="docs/assets/images/teaser/Teaser.png" width="800" alt="Teaser Image">
+  <img src="docs/assets/images/teaser/teaser_git.png" width="800" alt="Teaser Image">
 </p>
 
-This is the official code repository for our ICCV 2025 paper "Supercharging Floorplan Localization with Semantic Rays". The framework leverages both semantic and depth information for accurate camera pose estimation in indoor environments.
+This repository contains the official implementation of the following paper:
+
+**Supercharging Floorplan Localization with Semantic Rays**  
+**Authors**: Yuval Grader, Hadar Averbuch-Elor  
+[Paper](https://arxiv.org/abs/your-arxiv-id) | [arXiv](https://arxiv.org/abs/your-arxiv-id) | [Project Page](https://tau-vailab.github.io/SuperchargingFloorplanLocalizationWithSemanticRays/)
+
+The framework leverages both semantic and depth information for accurate camera pose estimation in indoor environments.
 
 ---
 
 ## Abstract
 Floorplans provide a compact representation of the building's structure, revealing not only layout information but also detailed semantics such as the locations of windows and doors. However, contemporary floorplan localization techniques mostly focus on matching depth-based structural cues, ignoring the rich semantics communicated within floorplans. In this work, we introduce a semantic-aware localization framework that jointly estimates depth and semantic rays, consolidating over both for predicting a structural-semantic probability volume. Our probability volume is constructed in a coarse-to-fine manner: We first sample a small set of rays to obtain an initial low-resolution probability volume. We then refine these probabilities by performing a denser sampling only in high-probability regions and process the refined values for predicting a 2D location and orientation angle. We conduct an evaluation on two standard floorplan localization benchmarks. Our experiments demonstrate that our approach substantially outperforms state-of-the-art methods, achieving significant improvements in recall metrics compared to prior works. Moreover, we demonstrate that our framework can easily incorporate additional metadata such as room labels, enabling additional gains in both accuracy and efficiency.
-
----
-
-## Links
-- [GitHub Project Page](https://github.com/your-repo)
-- [Paper (arXiv)](https://arxiv.org/abs/your-arxiv-id)
-- [ICCV 2025 Conference](https://iccv2025.thecvf.com/)
-- [Structured3D Dataset](https://structured3d-dataset.org/)
-- [ZInD Dataset](https://zind.cs.princeton.edu/)
 
 ---
 
