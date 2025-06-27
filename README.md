@@ -8,7 +8,7 @@ This repository contains the official implementation of the following paper:
 
 **Supercharging Floorplan Localization with Semantic Rays**  
 **Authors**: Yuval Grader, Hadar Averbuch-Elor  
-[Paper](https://arxiv.org/abs/your-arxiv-id) | [arXiv](https://arxiv.org/abs/your-arxiv-id) | [Project Page](https://tau-vailab.github.io/SuperchargingFloorplanLocalizationWithSemanticRays/)
+[Paper](https://arxiv.org/abs/your-arxiv-id) | [arXiv](https://arxiv.org/abs/your-arxiv-id) | [Project Page](https://tau-vailab.github.io/SemRayLoc/) | [GitHub](https://github.com/TAU-VAILab/SemRayLoc)
 
 The framework leverages both semantic and depth information for accurate camera pose estimation in indoor environments.
 
