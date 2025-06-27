@@ -10,7 +10,7 @@ from shapely.geometry import Polygon
 from descartes.patch import PolygonPatch
 
 from misc.figures import plot_coords
-from misc.colors import colormap_255, semantics_cmap
+from utils.zind_colors import colormap_255, semantics_cmap
 
 
 def visualize_wireframe(annos):
