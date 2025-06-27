@@ -1,8 +1,5 @@
 # Supercharging Floorplan Localization with Semantic Rays
 
-[![GitHub](https://img.shields.io/badge/GitHub-Project-blue?logo=github)](https://github.com/your-repo)
-[![Paper](https://img.shields.io/badge/Paper-ICCV%202025-red)](https://arxiv.org/abs/your-arxiv-id)
-
 <p align="center">
   <img src="docs/assets/images/teaser/teaser_git.png" width="800" alt="Teaser Image">
 </p>
