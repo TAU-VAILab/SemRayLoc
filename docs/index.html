@@ -200,28 +200,33 @@
   </div>
 
   <!-- Teaser Section: Single Image with Interactive Regions -->
-  <div class="teaser-section mb-5 text-center" style="position:relative; display:inline-block;">
-    <img id="teaserImg" src="assets/images/teaser/Teaser.png" alt="Teaser" style="max-width:80%;height:auto; margin-bottom:2em;">
-    <!-- Overlay for middle up (depth) -->
-    <div id="teaserDepthRegion" style="
-      position:absolute;
-      left:33.33%; top:0;
-      width:33.33%; height:50%;
-      cursor:pointer;
-      z-index:2;
-    "></div>
-    <!-- Overlay for middle bottom (semantic) -->
-    <div id="teaserSemanticRegion" style="
-      position:absolute;
-      left:33.33%; top:50%;
-      width:33.33%; height:50%;
-      cursor:pointer;
-      z-index:2;
-    "></div>
+  <div class="row mb-5">
+    <div class="col-md-12 text-center">
+      <div class="teaser-section" style="position:relative;">
+        <img id="teaserImg" src="assets/images/teaser/Teaser.png" alt="Teaser" style="width:100%;height:auto; margin-bottom:2em;">
+        <!-- Overlay for middle up (depth) -->
+        <div id="teaserDepthRegion" style="
+          position:absolute;
+          left:33.33%; top:0;
+          width:33.33%; height:50%;
+          cursor:pointer;
+          z-index:2;
+        "></div>
+        <!-- Overlay for middle bottom (semantic) -->
+        <div id="teaserSemanticRegion" style="
+          position:absolute;
+          left:33.33%; top:50%;
+          width:33.33%; height:50%;
+          cursor:pointer;
+          z-index:2;
+        "></div>
+      </div>
+    </div>
   </div>
   <div class="text-left mb-4" style="font-size:1.15rem; color:#888;">
-    Hover over the floorplan to view the predicted rays. In the top row, localization using a raw, walls-only floorplan often produces ambiguous results. In the bottom row, we show localization with a floorplan enriched by semantic information. In this work, we leverage this richer—yet readily available—representation: a floorplan annotated with semantic labels (bottom row). Our approach supercharges localization with semantic rays, effectively resolving ambiguities, as illustrated by the comparison on the right.  </div>
-
+    Which floorplan is easier to localize, the raw floorplan on top or the one enhanced with semantic labels on the bottom? As illustrated above, localization using a raw, walls-only floorplan often produces ambiguous results. In this work, we introduce an approach that supercharges floorplan localization with semantic rays, effectively resolving ambiguities, as illustrated on the bottom. Hover on the floorplans to view the predicted rays and the localization result in each case. 
+    <!-- In the top row, localization using a raw, walls-only floorplan often produces ambiguous results. In the bottom row, we show localization with a floorplan enriched by semantic information. In this work, we leverage this richer—yet readily available—representation: a floorplan annotated with semantic labels (bottom row). Our approach supercharges localization with semantic rays, effectively resolving ambiguities, as illustrated by the comparison on the right. -->
+  </div>
   <!-- abstract -->
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -550,28 +555,13 @@
 
   <!-- methods -->
   <div class="row">
-    <div class="col-md-12 col-sm-12 col-xs-12">
-      <p class="h3 font-weight-bold title">How does it work?</p>
+    <div class="col-md-12 col-sm-12 col-xs-12 text-left">
+      <p class="h3 font-weight-bold title text-left">How does it work?</p>
       <div class="row mt-4">
-        <div class="col-12 text-center">
+        <div class="col-12 text-left">
           <img src="assets/images/methods/pipe.jpg" alt="Method Pipeline" style="max-width:100%;height:auto;">
-          <div class="mt-2" style="font-size:1.15rem; color:#555;">Figure: Overview of our semantic-aware floorplan localization pipeline.</div>
-        </div>
-      </div>
-      <div class="row mt-4">
-        <div class="col-12">
-          <ul style="font-size:1.1rem; line-height:1.6;">
-            <li><b><span class="emoji">🚪</span> Semantic Ray Prediction:</b> Predict semantic rays using a ResNet50 backbone with attention mechanisms</li>
-            <li><b><span class="emoji">📊</span> Probability Volume Construction:</b> Fuse depth and semantic cues to build a structural-semantic probability volume</li>
-            <li><b><span class="emoji">🎯</span> Coarse-to-Fine Localization:</b>
-              <ul>
-                <li>Initial low-resolution sampling for candidate regions</li>
-                <li>Dense sampling in high-probability regions</li>
-                <li>High-resolution ray comparison for precise localization</li>
-              </ul>
-            </li>
-            <li><b><span class="emoji">📺</span> Room Aware:</b> Predict room type to narrow search space and improve accuracy</li>
-          </ul>
+          <div class="mt-2" style="font-size:1.15rem; color:#555; text-align:left;">
+            Our approach begins by predicting depth and semantic rays from a single input image, capturing both the scene’s geometric structure and contextual cues. We then interpolate these rays to build a coarse structural–semantic probability volume over the floorplan, assigning each position and orientation a likelihood that the image was captured there. In the refinement step, we extract the Top-K candidate poses—enforcing a minimum spatial separation—and, for each candidate, recompute its score using the original fine-grained ray predictions to achieve a more accurate probability. Optionally, we predict the room in which the image was taken and, in high-confidence cases, apply a room mask to further narrow the search space.          </div>
         </div>
       </div>
     </div>
