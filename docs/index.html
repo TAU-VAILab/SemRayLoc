@@ -186,7 +186,7 @@
         <div class="h6 font-weight-normal">Cornell University</div>
       </div>
     </div>
-    <div style="font-size:1.7rem; font-weight:600; letter-spacing:1px; color:#000; margin-bottom:1.5em;">ICCV 2025</div>
+    <div style="font-size:1.7rem; font-weight:600; letter-spacing:1px; color:#000; margin-bottom:1.5em;">🌴 ICCV 2025 🏄</div>
   </div>
 
   <!-- Links section -->
@@ -223,15 +223,20 @@
       </div>
     </div>
   </div>
-  <div class="text-left mb-4" style="font-size:1.15rem; color:#888;">
-    Which floorplan is easier to localize, the raw floorplan on top or the one enhanced with semantic labels on the bottom? As illustrated above, localization using a raw, walls-only floorplan often produces ambiguous results. In this work, we introduce an approach that supercharges floorplan localization with semantic rays, effectively resolving ambiguities, as illustrated on the bottom. Hover on the floorplans to view the predicted rays and the localization result in each case. 
+  <div class="mb-4" style="font-size:1.15rem; color:#888; text-align: justify;">
+    <strong>Which floorplan is easier to localize?</strong> The raw floorplan on top or the one enhanced with semantic labels on the bottom? As illustrated above*, localization using a raw, walls-only floorplan often produces ambiguous results. In this work, we introduce an approach that supercharges floorplan localization with semantic rays, effectively resolving ambiguities. Hover on the floorplans to view the predicted rays and the localization result in each case. 
+    <br>
+    <span style="font-size:0.6em;">
+      * with the method introduced in “Fusion and Filtering for Floorplan Localization”, CVPR 2024
+    </span>
+
     <!-- In the top row, localization using a raw, walls-only floorplan often produces ambiguous results. In the bottom row, we show localization with a floorplan enriched by semantic information. In this work, we leverage this richer—yet readily available—representation: a floorplan annotated with semantic labels (bottom row). Our approach supercharges localization with semantic rays, effectively resolving ambiguities, as illustrated by the comparison on the right. -->
   </div>
   <!-- abstract -->
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <p class="h3 font-weight-bold title">Abstract</p>
-      <p class="abstract">
+      <p class="abstract" style="text-align: justify;">
         Floorplans provide a compact representation of the building's structure, revealing not only layout information but also detailed semantics such as the locations of windows and doors. However, contemporary floorplan localization techniques mostly focus on matching depth-based structural cues, ignoring the rich semantics communicated within floorplans. In this work, we introduce a semantic-aware localization framework that jointly estimates depth and semantic rays, consolidating over both for predicting a structural-semantic probability volume. Our probability volume is constructed in a coarse-to-fine manner: We first sample a small set of rays to obtain an initial low-resolution probability volume. We then refine these probabilities by performing a denser sampling only in high-probability regions and process the refined values for predicting a 2D location and orientation angle. We conduct an evaluation on two standard floorplan localization benchmarks. Our experiments demonstrate that our approach substantially outperforms state-of-the-art methods, achieving significant improvements in recall metrics compared to prior works. Moreover, we demonstrate that our framework can easily incorporate additional metadata such as room labels, enabling additional gains in both accuracy and efficiency.
       </p>
     </div>
@@ -240,7 +245,7 @@
   <!-- Improved Interactive Demo Section -->
   <div class="container my-5" id="interactive-demo">
     <h3 class="h3 font-weight-bold title mb-3">Interactive Demo</h3>
-    <p class="lead mb-4">
+    <p class="lead mb-4" style="text-align: justify;">
       Explore our localization results across different floorplans and images. Select a floorplan and an image to see how our method localizes the camera position and orientation. The demo shows the progression of our method's performance as we add more components:
     </p>
     <ul class="mb-4" style="font-size:1.1rem; line-height:1.6;">
@@ -560,8 +565,9 @@
       <div class="row mt-4">
         <div class="col-12 text-left">
           <img src="assets/images/methods/pipe.jpg" alt="Method Pipeline" style="max-width:100%;height:auto;">
-          <div class="mt-2" style="font-size:1.15rem; color:#555; text-align:left;">
-            Our approach begins by predicting depth and semantic rays from a single input image, capturing both the scene’s geometric structure and contextual cues. We then interpolate these rays to build a coarse structural–semantic probability volume over the floorplan, assigning each position and orientation a likelihood that the image was captured there. In the refinement step, we extract the Top-K candidate poses—enforcing a minimum spatial separation—and, for each candidate, recompute its score using the original fine-grained ray predictions to achieve a more accurate probability. Optionally, we predict the room in which the image was taken and, in high-confidence cases, apply a room mask to further narrow the search space.          </div>
+          <div class="mt-2" style="font-size:1.15rem; color:#555; text-align: justify;">
+            Our approach begins by predicting depth and semantic rays from a single input image, capturing both the scene's geometric structure and contextual cues. We then interpolate these rays to build a coarse structural–semantic probability volume over the floorplan, assigning each position and orientation a likelihood that the image was captured there. In the refinement step, we extract the Top-K candidate poses—enforcing a minimum spatial separation—and, for each candidate, recompute its score using the original fine-grained ray predictions to achieve a more accurate probability. Optionally, we predict the room in which the image was taken and, in high-confidence cases, apply a room mask to further narrow the search space.
+          </div>
         </div>
       </div>
     </div>
