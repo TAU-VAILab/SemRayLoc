@@ -115,13 +115,16 @@ See `requirements.txt` for all dependencies.
 ---
 
 ## Citation
-If you use this code, please cite our ICCV 2025 paper:
+If you use this code, please cite our paper:
 
 ```bibtex
-@inproceedings{grader2025supercharging,
-  title={Supercharging Floorplan Localization with Semantic Rays},
-  author={Grader, Yuval and Averbuch-Elor, Hadar},
-  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
-  year={2025}
+@misc{grader2025superchargingfloorplanlocalizationsemantic,
+      title={Supercharging Floorplan Localization with Semantic Rays}, 
+      author={Yuval Grader and Hadar Averbuch-Elor},
+      year={2025},
+      eprint={2507.09291},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2507.09291}, 
 }
-``` 
+```
